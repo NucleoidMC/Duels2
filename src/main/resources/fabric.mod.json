@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "duels",
+  "version": "${version}",
+  "name": "Duels",
+  "description": "A simple duels minigame developed using Plasmid API. ",
+  "authors": [
+    "CyborgPigeon"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/duels/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.hyper_pigeon.duels.Duels"
+    ]
+  },
+  "mixins": [
+    "duels.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.10",
+    "fabric": "*",
+    "minecraft": "1.19.2"
+  }
+}
