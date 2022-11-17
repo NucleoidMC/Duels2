@@ -1,6 +1,10 @@
 {
   "type": "duels:duels",
-  "mode": "classic",
+  "mode": "solo",
+  "players": {
+    "min": 2,
+    "max": 2
+  },
   "armor": [
     {
       "id": "iron_helmet",
