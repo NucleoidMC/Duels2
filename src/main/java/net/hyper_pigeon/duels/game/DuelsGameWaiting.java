@@ -1,6 +1,5 @@
 package net.hyper_pigeon.duels.game;
 
-import net.hyper_pigeon.duels.config.DuelsConfig;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -17,13 +16,13 @@ import xyz.nucleoid.plasmid.game.GameOpenProcedure;
 import xyz.nucleoid.plasmid.game.GameResult;
 import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.game.common.GameWaitingLobby;
-import xyz.nucleoid.plasmid.game.common.config.PlayerConfig;
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
 import xyz.nucleoid.plasmid.game.event.GamePlayerEvents;
 import xyz.nucleoid.plasmid.game.player.PlayerOffer;
 import xyz.nucleoid.plasmid.game.player.PlayerOfferResult;
 import xyz.nucleoid.plasmid.game.rule.GameRuleType;
 import xyz.nucleoid.plasmid.game.world.generator.TemplateChunkGenerator;
+import xyz.nucleoid.plasmid.util.PlayerRef;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ public class DuelsGameWaiting {
     private final GameSpace gameSpace;
     private final ServerWorld world;
     private final GameOpenContext<DuelsConfig> context;
-    private ArrayList<ServerPlayerEntity> duelists = new ArrayList<>();
+    private ArrayList<PlayerRef> participants = new ArrayList<>();
 
     public DuelsGameWaiting(DuelsConfig config, GameSpace gameSpace, ServerWorld world, GameOpenContext<DuelsConfig> context) {
         this.config = config;
@@ -75,7 +74,7 @@ public class DuelsGameWaiting {
 
         return context.openWithWorld(worldConfig, (activity, world) -> {
             DuelsGameWaiting waiting = new DuelsGameWaiting(duelsConfig, activity.getGameSpace(), world, context);
-            GameWaitingLobby.addTo(activity, new PlayerConfig(1, 2));
+            GameWaitingLobby.addTo(activity, duelsConfig.playerConfig());
             activity.deny(GameRuleType.PVP);
             activity.deny(GameRuleType.BREAK_BLOCKS);
 
@@ -86,7 +85,7 @@ public class DuelsGameWaiting {
     }
 
     private GameResult requestStart() {
-        DuelsGameActive.open(config,gameSpace,world,duelists);
+        DuelsGameActive.open(config,gameSpace,world,participants);
         return GameResult.ok();
     }
 
@@ -100,8 +99,8 @@ public class DuelsGameWaiting {
         ServerPlayerEntity player = playerOffer.player();
         return playerOffer.accept(this.world, new Vec3d(0.0, 66.0, 0.0))
                 .and(() -> {
-                    if(this.duelists.size() < 2) {
-                        duelists.add(player);
+                    if(this.participants.size() < 2) {
+                        participants.add(PlayerRef.of(player));
                         player.changeGameMode(GameMode.ADVENTURE);
                     }
                     else {

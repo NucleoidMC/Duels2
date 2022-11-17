@@ -1,6 +1,5 @@
 package net.hyper_pigeon.duels.game;
 
-import net.hyper_pigeon.duels.config.DuelsConfig;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
@@ -19,6 +18,7 @@ import xyz.nucleoid.plasmid.game.player.PlayerOffer;
 import xyz.nucleoid.plasmid.game.player.PlayerOfferResult;
 import xyz.nucleoid.plasmid.game.rule.GameRuleType;
 import xyz.nucleoid.plasmid.util.ItemStackBuilder;
+import xyz.nucleoid.plasmid.util.PlayerRef;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
 import java.util.ArrayList;
@@ -27,22 +27,22 @@ public class DuelsGameActive {
     private final DuelsConfig config;
     private final GameSpace gameSpace;
     private final ServerWorld world;
-    private final ArrayList<ServerPlayerEntity> duelists;
+    private final ArrayList<PlayerRef> participants;
     public static final ArrayList<DuelsGameActive> runningGames = new ArrayList<>();
     private GamePhase gamePhase;
     private long endTime;
 
-    public DuelsGameActive(DuelsConfig config, GameSpace gameSpace, ServerWorld world, ArrayList<ServerPlayerEntity> duelists) {
+    public DuelsGameActive(DuelsConfig config, GameSpace gameSpace, ServerWorld world, ArrayList<PlayerRef> participants) {
         this.config = config;
         this.gameSpace = gameSpace;
         this.world = world;
-        this.duelists = duelists;
+        this.participants = participants;
         gamePhase = GamePhase.GAME_CONTINUE;
     }
 
-    public static void open(DuelsConfig config,GameSpace gameSpace,  ServerWorld world, ArrayList<ServerPlayerEntity> duelists){
+    public static void open(DuelsConfig config,GameSpace gameSpace,  ServerWorld world, ArrayList<PlayerRef> participants){
         gameSpace.setActivity(game -> {
-            DuelsGameActive active = new DuelsGameActive(config, gameSpace, world, duelists);
+            DuelsGameActive active = new DuelsGameActive(config, gameSpace, world, participants);
             runningGames.add(active);
 
 
@@ -53,7 +53,7 @@ public class DuelsGameActive {
             game.listen(GamePlayerEvents.OFFER, active::onPlayerOffer);
             game.listen(PlayerDeathEvent.EVENT, active::onPlayerDeath);
             game.listen(GameActivityEvents.ENABLE, active::onEnable);
-
+            game.listen(GamePlayerEvents.REMOVE, active::removePlayer);
 
         });
     }
@@ -74,8 +74,15 @@ public class DuelsGameActive {
         }
     }
 
-    //shamelessly ripped from https://github.com/NucleoidMC/skywars/blob/1.19/src/main/java/us/potatoboy/skywars/kit/Kit.java
 
+    private void removePlayer(ServerPlayerEntity player) {
+        if(participants.contains(PlayerRef.of(player)))
+            this.participants.remove(PlayerRef.of(player));
+            tryEndDuel();
+    }
+
+
+    //shamelessly ripped from https://github.com/NucleoidMC/skywars/blob/1.19/src/main/java/us/potatoboy/skywars/kit/Kit.java
     public void equipPlayer(ServerPlayerEntity player) {
         for (ItemStack itemStack : this.config.items()) {
             player.getInventory().insertStack(ItemStackBuilder.of(itemStack).build());
@@ -90,11 +97,13 @@ public class DuelsGameActive {
 
     private void onEnable() {
         BlockPos teleportPos = new BlockPos(-25,65,-25);
-        for (ServerPlayerEntity duelist : duelists){
-            equipPlayer(duelist);
-            duelist.requestTeleport(teleportPos.getX(),teleportPos.getY(),teleportPos.getZ());
-            duelist.refreshPositionAfterTeleport(teleportPos.getX(),teleportPos.getY(),teleportPos.getZ());
-            teleportPos = new BlockPos(25,65,25);
+        for (PlayerRef participant : participants){
+            if(participant.isOnline(world)) {
+                equipPlayer(participant.getEntity(world));
+                participant.getEntity(world).requestTeleport(teleportPos.getX(),teleportPos.getY(),teleportPos.getZ());
+                participant.getEntity(world).refreshPositionAfterTeleport(teleportPos.getX(),teleportPos.getY(),teleportPos.getZ());
+                teleportPos = new BlockPos(25,65,25);
+            }
         }
     }
 
@@ -106,15 +115,8 @@ public class DuelsGameActive {
 
         serverPlayerEntity.changeGameMode(GameMode.SPECTATOR);
 
+        removePlayer(serverPlayerEntity);
 
-        if (duelists.contains(serverPlayerEntity)){
-            duelists.remove(serverPlayerEntity);
-            this.gameSpace.getPlayers().
-                    sendMessage(Text.of(duelists.get(0).getName().getString() + " has won the duel!"));
-
-            gamePhase = GamePhase.GAME_ENDING;
-            this.endTime = world.getTime() + 20*10;
-        }
         return ActionResult.FAIL;
     }
 
@@ -126,6 +128,19 @@ public class DuelsGameActive {
                     player.changeGameMode(GameMode.SPECTATOR);
                 });
     }
+
+    public void tryEndDuel(){
+        if(this.config.mode().equals("solo") && participants.size() == 1) {
+            this.gameSpace.getPlayers().
+                    sendMessage(Text.of(participants.get(0).getEntity(world).getName().getString() + " has won the duel!"));
+
+            gamePhase = GamePhase.GAME_ENDING;
+            this.endTime = world.getTime() + 20*10;
+        }
+    }
+
+
+
 
 
 }

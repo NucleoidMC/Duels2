@@ -1,7 +1,7 @@
 package net.hyper_pigeon.duels;
 
 import net.fabricmc.api.ModInitializer;
-import net.hyper_pigeon.duels.config.DuelsConfig;
+import net.hyper_pigeon.duels.game.DuelsConfig;
 import net.hyper_pigeon.duels.game.DuelsGameWaiting;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
