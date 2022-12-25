@@ -10,6 +10,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
+import xyz.nucleoid.plasmid.event.GameEvents;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
 import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
@@ -27,10 +28,13 @@ public class DuelsGameActive {
     private final DuelsConfig config;
     private final GameSpace gameSpace;
     private final ServerWorld world;
+    //private final DuelsMap gameMap;
     private final ArrayList<PlayerRef> participants;
+
+
     public static final ArrayList<DuelsGameActive> runningGames = new ArrayList<>();
     private GamePhase gamePhase;
-    private long endTime;
+    private long finishTime;
 
     public DuelsGameActive(DuelsConfig config, GameSpace gameSpace, ServerWorld world, ArrayList<PlayerRef> participants) {
         this.config = config;
@@ -64,7 +68,7 @@ public class DuelsGameActive {
                 break;
             }
             case GAME_ENDING -> {
-                if(world.getTime() >= endTime){
+                if(world.getTime() >= finishTime){
                     gamePhase = GamePhase.GAME_FINISHED;
                 }
             }
@@ -135,7 +139,7 @@ public class DuelsGameActive {
                     sendMessage(Text.of(participants.get(0).getEntity(world).getName().getString() + " has won the duel!"));
 
             gamePhase = GamePhase.GAME_ENDING;
-            this.endTime = world.getTime() + 20*10;
+            this.finishTime = world.getTime() + 20*10;
         }
     }
 
