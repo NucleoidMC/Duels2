@@ -1,5 +1,8 @@
 package net.hyper_pigeon.duels.game;
 
+import com.google.common.collect.Multimap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import net.hyper_pigeon.duels.game.map.DuelsMap;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
@@ -7,12 +10,11 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
-import xyz.nucleoid.plasmid.event.GameEvents;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
 import xyz.nucleoid.plasmid.game.GameSpace;
+import xyz.nucleoid.plasmid.game.common.team.GameTeam;
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
 import xyz.nucleoid.plasmid.game.event.GamePlayerEvents;
 import xyz.nucleoid.plasmid.game.player.PlayerOffer;
@@ -23,30 +25,36 @@ import xyz.nucleoid.plasmid.util.PlayerRef;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class DuelsGameActive {
     private final DuelsConfig config;
     private final GameSpace gameSpace;
     private final ServerWorld world;
-    //private final DuelsMap gameMap;
-    private final ArrayList<PlayerRef> participants;
+    private final DuelsMap gameMap;
+    //private final ArrayList<PlayerRef> participants;
+    public final Object2ObjectMap<PlayerRef, DuelsPlayer> participants;
+    public final Multimap<GameTeam, PlayerRef> teamPlayers;
 
 
     public static final ArrayList<DuelsGameActive> runningGames = new ArrayList<>();
     private GamePhase gamePhase;
     private long finishTime;
 
-    public DuelsGameActive(DuelsConfig config, GameSpace gameSpace, ServerWorld world, ArrayList<PlayerRef> participants) {
+    public DuelsGameActive(DuelsConfig config, GameSpace gameSpace, ServerWorld world, DuelsMap gameMap, Multimap<GameTeam, PlayerRef> teamPlayers, Object2ObjectMap<PlayerRef, DuelsPlayer> participants) {
         this.config = config;
         this.gameSpace = gameSpace;
         this.world = world;
+        this.gameMap = gameMap;
+        this.teamPlayers = teamPlayers;
         this.participants = participants;
         gamePhase = GamePhase.GAME_CONTINUE;
     }
 
-    public static void open(DuelsConfig config,GameSpace gameSpace,  ServerWorld world, ArrayList<PlayerRef> participants){
+    public static void open(DuelsConfig config,GameSpace gameSpace,  ServerWorld world, DuelsMap duelsMap,Multimap<GameTeam, PlayerRef> teamPlayers,Object2ObjectMap<PlayerRef, DuelsPlayer> participants){
         gameSpace.setActivity(game -> {
-            DuelsGameActive active = new DuelsGameActive(config, gameSpace, world, participants);
+            DuelsGameActive active = new DuelsGameActive(config, gameSpace, world, duelsMap, teamPlayers, participants);
             runningGames.add(active);
 
 
@@ -80,13 +88,19 @@ public class DuelsGameActive {
 
 
     private void removePlayer(ServerPlayerEntity player) {
-        if(participants.contains(PlayerRef.of(player)))
+        if(participants.containsKey(PlayerRef.of(player))) {
+            GameTeam gameTeam = participants.get(PlayerRef.of(player)).team;
+
             this.participants.remove(PlayerRef.of(player));
+            this.teamPlayers.values().remove(PlayerRef.of(player));
+
+
             tryEndDuel();
+        }
+
     }
 
 
-    //shamelessly ripped from https://github.com/NucleoidMC/skywars/blob/1.19/src/main/java/us/potatoboy/skywars/kit/Kit.java
     public void equipPlayer(ServerPlayerEntity player) {
         for (ItemStack itemStack : this.config.items()) {
             player.getInventory().insertStack(ItemStackBuilder.of(itemStack).build());
@@ -100,43 +114,68 @@ public class DuelsGameActive {
     }
 
     private void onEnable() {
-        BlockPos teleportPos = new BlockPos(-25,65,-25);
-        for (PlayerRef participant : participants){
-            if(participant.isOnline(world)) {
-                equipPlayer(participant.getEntity(world));
-                participant.getEntity(world).requestTeleport(teleportPos.getX(),teleportPos.getY(),teleportPos.getZ());
-                participant.getEntity(world).refreshPositionAfterTeleport(teleportPos.getX(),teleportPos.getY(),teleportPos.getZ());
-                teleportPos = new BlockPos(25,65,25);
+//        if(config.mode().equals("solo")){
+//            Iterator<Vec3d> spawnIterator = new ArrayList<Vec3d>(List.of(gameMap.getSpawn1().centerTop(),gameMap.getSpawn2().centerTop())).iterator();
+//            for (GameTeam team : teamPlayers.keySet()) {
+//                Vec3d spawn = spawnIterator.next();
+//                for (PlayerRef ref : teamPlayers.get(team)) {
+//                    participants.get(ref).getServerPlayerEntity().requestTeleport(spawn.getX(),spawn.getY(),spawn.getZ());
+//                    participants.get(ref).getServerPlayerEntity().refreshPositionAfterTeleport(spawn.getX(),spawn.getY(),spawn.getZ());
+//                }
+//            }
+//        }
+        Iterator<Vec3d> spawnIterator = new ArrayList<Vec3d>(List.of(gameMap.getSpawn1().centerTop(),gameMap.getSpawn2().centerTop())).iterator();
+        for (GameTeam team : teamPlayers.keySet()) {
+            Vec3d spawn = spawnIterator.next();
+            for (PlayerRef ref : teamPlayers.get(team)) {
+                participants.get(ref).getServerPlayerEntity().requestTeleport(spawn.getX(),spawn.getY(),spawn.getZ());
+                participants.get(ref).getServerPlayerEntity().refreshPositionAfterTeleport(spawn.getX(),spawn.getY(),spawn.getZ());
+                equipPlayer(participants.get(ref).getServerPlayerEntity());
             }
         }
+
     }
 
     private ActionResult onPlayerDeath(ServerPlayerEntity serverPlayerEntity, DamageSource source) {
-
-        BlockPos teleportPos = new BlockPos(0,65,0);
-        serverPlayerEntity.requestTeleport(0,65,0);
-        serverPlayerEntity.refreshPositionAndAngles(teleportPos,serverPlayerEntity.getYaw(),serverPlayerEntity.getPitch());
+//        BlockPos teleportPos = new BlockPos(0,65,0);
+//        serverPlayerEntity.requestTeleport(0,65,0);
+//        serverPlayerEntity.refreshPositionAndAngles(teleportPos,serverPlayerEntity.getYaw(),serverPlayerEntity.getPitch());
 
         serverPlayerEntity.changeGameMode(GameMode.SPECTATOR);
-
         removePlayer(serverPlayerEntity);
-
         return ActionResult.FAIL;
     }
 
     private PlayerOfferResult onPlayerOffer(PlayerOffer playerOffer) {
         ServerPlayerEntity player = playerOffer.player();
-        BlockPos blockPos = new BlockPos(-25,65,-25);
-        return playerOffer.accept(this.world, new Vec3d(blockPos.getX(), blockPos.getY(), blockPos.getZ()))
+        Vec3d vec3d = gameMap.getSpawn1().centerTop();
+        return playerOffer.accept(this.world, vec3d)
                 .and(() -> {
                     player.changeGameMode(GameMode.SPECTATOR);
                 });
     }
 
     public void tryEndDuel(){
-        if(this.config.mode().equals("solo") && participants.size() == 1) {
-            this.gameSpace.getPlayers().
-                    sendMessage(Text.of(participants.get(0).getEntity(world).getName().getString() + " has won the duel!"));
+//        if(this.config.mode().equals("solo") && participants.size() == 1) {
+//            this.gameSpace.getPlayers().
+//                    sendMessage(Text.of(participants.get(0).getServerPlayerEntity().getName().getString() + " has won the duel!"));
+//
+//            gamePhase = GamePhase.GAME_ENDING;
+//            this.finishTime = world.getTime() + 20*10;
+//        }
+        if(this.teamPlayers.keySet().size() == 1){
+            DuelsPlayer duelsPlayer = participants.values().iterator().next();
+            if(this.config.mode().equals("solo")) {
+                this.gameSpace.getPlayers().
+                    sendMessage(Text.of(duelsPlayer.getServerPlayerEntity().getName().getString() + " has won the duel!"));
+            }
+            else{
+                GameTeam winningTeam = duelsPlayer.team;
+                this.gameSpace.getPlayers().sendMessage(
+                        Text.of(winningTeam.config().name().getString() + " has won the duel!")
+                );
+            }
+
 
             gamePhase = GamePhase.GAME_ENDING;
             this.finishTime = world.getTime() + 20*10;

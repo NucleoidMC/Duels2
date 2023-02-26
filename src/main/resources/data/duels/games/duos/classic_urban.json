@@ -1,0 +1,72 @@
+{
+  "type": "duels:duels",
+  "mode": "duos",
+  "map": {
+    "id": "duels:2v2urban"
+  },
+  "players": {
+    "min": 4,
+    "max": 4
+  },
+  "team_size": 2,
+  "armor": [
+    {
+      "id": "iron_helmet",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 1,
+            "id": "protection"
+          }
+        ]
+      }
+    },
+    {
+      "id": "iron_chestplate",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 1,
+            "id": "protection"
+          }
+        ]
+      }
+    },
+    {
+      "id": "iron_leggings",
+      "Count": 1
+    },
+    {
+      "id": "iron_boots",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 1,
+            "id": "protection"
+          }
+        ]
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "iron_sword",
+      "Count": 1
+    },
+    {
+      "id": "bow",
+      "Count": 1
+    },
+    {
+      "id": "golden_carrot",
+      "Count": 1
+    },
+    {
+      "id": "arrow",
+      "Count": 8
+    }
+  ]
+}
