@@ -132,7 +132,8 @@ public class DuelsGameWaiting {
 
     private ActionResult onPlayerDeath(ServerPlayerEntity serverPlayerEntity, DamageSource source) {
         serverPlayerEntity.setHealth(20.0F);
-        serverPlayerEntity.requestTeleport(0, 66, 0);
+        Vec3d teleportPos = duelsMap.getSpawn1().centerTop();
+        serverPlayerEntity.requestTeleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
         return ActionResult.SUCCESS;
     }
 

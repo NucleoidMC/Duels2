@@ -1,4 +1,7 @@
 {
   "gameType.duels.duels": "Duels",
-  "game.duels.classic": "Classic Duels"
+  "game.duels.classic_mountains": "Classic Mountains",
+  "game.duels.classic_urban": "Classic Duos Urban",
+
+  "sidebar.duels.title": "Duels"
 }
