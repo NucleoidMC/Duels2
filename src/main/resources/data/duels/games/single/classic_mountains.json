@@ -1,10 +1,14 @@
 {
   "type": "duels:duels",
   "mode": "solo",
+  "map": {
+    "id": "duels:mountains"
+  },
   "players": {
     "min": 2,
     "max": 2
   },
+  "team_size": 1,
   "armor": [
     {
       "id": "iron_helmet",

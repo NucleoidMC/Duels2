@@ -33,6 +33,7 @@ public class DuelsMap {
         this.config = config;
     }
 
+
     public ChunkGenerator asGenerator(MinecraftServer server) {
         return new TemplateChunkGenerator(server, this.template);
     }
