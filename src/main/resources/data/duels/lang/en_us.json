@@ -1,7 +1,8 @@
 {
   "gameType.duels.duels": "Duels",
-  "game.duels.classic_mountains": "Classic Mountains",
-  "game.duels.classic_urban": "Classic Duos Urban",
-
+  "game.duels.single.classic_mountains": "Classic Mountains",
+  "game.duels.duos.classic_urban": "Classic Duos Urban",
+  "gameType.duels.duels.desc.1": "Fight in a 2v2 battle with classic kits!",
+  "gameType.duels.duels.desc.2": "Fight in a 1v1 battle with classic kits!",
   "sidebar.duels.title": "Duels"
 }

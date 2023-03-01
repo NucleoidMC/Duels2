@@ -1,6 +1,10 @@
 {
   "type": "duels:duels",
   "mode": "solo",
+  "icon": "minecraft:iron_sword",
+  "description": [{
+    "translate": "gameType.duels.duels.desc.2"
+  }],
   "map": {
     "id": "duels:mountains"
   },

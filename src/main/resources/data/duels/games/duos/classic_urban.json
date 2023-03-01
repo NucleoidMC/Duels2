@@ -1,6 +1,10 @@
 {
   "type": "duels:duels",
   "mode": "duos",
+  "icon": "minecraft:diamond_sword",
+  "description": [{
+    "translate": "gameType.duels.duels.desc.1"
+  }],
   "map": {
     "id": "duels:2v2urban"
   },
