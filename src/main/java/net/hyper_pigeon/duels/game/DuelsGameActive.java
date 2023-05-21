@@ -77,7 +77,7 @@ public class DuelsGameActive {
     }
 
     private ActionResult attackEntity(ServerPlayerEntity serverPlayerEntity, Hand hand, Entity entity, EntityHitResult entityHitResult) {
-        if(entity != null && entity instanceof ServerPlayerEntity &&(participants.get(PlayerRef.of(serverPlayerEntity)).team).equals(participants.get(PlayerRef.of((ServerPlayerEntity) entity)).team)) {
+        if(entity instanceof ServerPlayerEntity && (participants.get(PlayerRef.of(serverPlayerEntity)).team).equals(participants.get(PlayerRef.of((ServerPlayerEntity) entity)).team)) {
             return ActionResult.FAIL;
         }
         return ActionResult.PASS;
