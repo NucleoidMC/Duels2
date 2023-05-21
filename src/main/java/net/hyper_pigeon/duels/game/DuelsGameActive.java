@@ -3,13 +3,17 @@ package net.hyper_pigeon.duels.game;
 import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import net.hyper_pigeon.duels.game.map.DuelsMap;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
@@ -22,6 +26,7 @@ import xyz.nucleoid.plasmid.game.player.PlayerOfferResult;
 import xyz.nucleoid.plasmid.game.rule.GameRuleType;
 import xyz.nucleoid.plasmid.util.ItemStackBuilder;
 import xyz.nucleoid.plasmid.util.PlayerRef;
+import xyz.nucleoid.stimuli.event.player.PlayerAttackEntityEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
 import java.util.ArrayList;
@@ -66,8 +71,16 @@ public class DuelsGameActive {
             game.listen(PlayerDeathEvent.EVENT, active::onPlayerDeath);
             game.listen(GameActivityEvents.ENABLE, active::onEnable);
             game.listen(GamePlayerEvents.REMOVE, active::removePlayer);
+            game.listen(PlayerAttackEntityEvent.EVENT, active::attackEntity);
 
         });
+    }
+
+    private ActionResult attackEntity(ServerPlayerEntity serverPlayerEntity, Hand hand, Entity entity, EntityHitResult entityHitResult) {
+        if(entity != null && entity instanceof ServerPlayerEntity &&(participants.get(PlayerRef.of(serverPlayerEntity)).team).equals(participants.get(PlayerRef.of((ServerPlayerEntity) entity)).team)) {
+            return ActionResult.FAIL;
+        }
+        return ActionResult.PASS;
     }
 
     private void tick() {
