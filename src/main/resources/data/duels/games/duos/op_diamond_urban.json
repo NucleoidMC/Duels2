@@ -1,0 +1,100 @@
+{
+  "type": "duels:duels",
+  "mode": "duos",
+  "icon": "minecraft:diamond_sword",
+  "description": [{
+    "translate": "gameType.duels.duels.desc.3"
+  }],
+  "map": {
+    "id": "duels:2v2urban"
+  },
+  "players": {
+    "min": 4,
+    "max": 4
+  },
+  "team_size": 2,
+  "armor": [
+    {
+      "id": "diamond_helmet",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 4,
+            "id": "protection"
+          }
+        ]
+      }
+    },
+    {
+      "id": "diamond_chestplate",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 4,
+            "id": "protection"
+          }
+        ]
+      }
+    },
+    {
+      "id": "diamond_leggings",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 4,
+            "id": "protection"
+          }
+        ]
+      }
+    },
+    {
+      "id": "diamond_boots",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 4,
+            "id": "protection"
+          }
+        ]
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "diamond_axe",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 3,
+            "id": "sharpness"
+          }
+        ]
+      }
+    },
+    {
+      "id": "diamond_sword",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 5,
+            "id": "sharpness"
+          },
+          {
+            "lvl": 3,
+            "id": "sweeping_edge"
+          }
+        ]
+      }
+    },
+    {
+      "id": "golden_apple",
+      "Count": 6
+    }
+  ]
+}
