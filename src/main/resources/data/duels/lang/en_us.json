@@ -4,5 +4,7 @@
   "game.duels.duos.classic_urban": "Classic Duos Urban",
   "gameType.duels.duels.desc.1": "Fight in a 2v2 battle with classic kits!",
   "gameType.duels.duels.desc.2": "Fight in a 1v1 battle with classic kits!",
+  "gameType.duels.duels.desc.3": "Fight in a 2v2 battle with standard diamond kits!",
+  "gameType.duels.duels.desc.4": "Fight in a 1v1 battle with standard diamond kits!",
   "sidebar.duels.title": "Duels"
 }

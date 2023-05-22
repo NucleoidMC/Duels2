@@ -1,0 +1,60 @@
+{
+  "type": "duels:duels",
+  "mode": "solo",
+  "icon": "minecraft:iron_sword",
+  "description": [{
+    "translate": "gameType.duels.duels.desc.4"
+  }],
+  "map": {
+    "id": "duels:mountains"
+  },
+  "players": {
+    "min": 2,
+    "max": 2
+  },
+  "team_size": 1,
+  "armor": [
+    {
+      "id": "diamond_helmet",
+      "Count": 1
+    },
+    {
+      "id": "diamond_chestplate",
+      "Count": 1
+    },
+    {
+      "id": "diamond_leggings",
+      "Count": 1
+    },
+    {
+      "id": "diamond_boots",
+      "Count": 1
+    }
+  ],
+  "items": [
+    {
+      "id": "diamond_axe",
+      "Count": 1
+    },
+    {
+      "id": "diamond_sword",
+      "Count": 1
+    },
+    {
+      "id": "crossbow",
+      "Count": 1
+    },
+    {
+      "id": "bow",
+      "Count": 1
+    },
+    {
+      "id": "golden_carrot",
+      "Count": 1
+    },
+    {
+      "id": "arrow",
+      "Count": 6
+    }
+  ]
+}
