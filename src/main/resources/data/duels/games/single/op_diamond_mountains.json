@@ -1,0 +1,100 @@
+{
+  "type": "duels:duels",
+  "mode": "solo",
+  "icon": "minecraft:iron_sword",
+  "description": [{
+    "translate": "gameType.duels.duels.desc.4"
+  }],
+  "map": {
+    "id": "duels:mountains"
+  },
+  "players": {
+    "min": 2,
+    "max": 2
+  },
+  "team_size": 1,
+  "armor": [
+    {
+      "id": "diamond_helmet",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 4,
+            "id": "protection"
+          }
+        ]
+      }
+    },
+    {
+      "id": "diamond_chestplate",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 4,
+            "id": "protection"
+          }
+        ]
+      }
+    },
+    {
+      "id": "diamond_leggings",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 4,
+            "id": "protection"
+          }
+        ]
+      }
+    },
+    {
+      "id": "diamond_boots",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 4,
+            "id": "protection"
+          }
+        ]
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "diamond_axe",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 3,
+            "id": "sharpness"
+          }
+        ]
+      }
+    },
+    {
+      "id": "diamond_sword",
+      "Count": 1,
+      "tag": {
+        "Enchantments": [
+          {
+            "lvl": 5,
+            "id": "sharpness"
+          },
+          {
+            "lvl": 3,
+            "id": "sweeping_edge"
+          }
+        ]
+      }
+    },
+    {
+      "id": "golden_apple",
+      "Count": 6
+    }
+  ]
+}

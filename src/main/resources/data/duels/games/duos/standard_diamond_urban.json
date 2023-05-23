@@ -1,0 +1,60 @@
+{
+  "type": "duels:duels",
+  "mode": "duos",
+  "icon": "minecraft:diamond_sword",
+  "description": [{
+    "translate": "gameType.duels.duels.desc.3"
+  }],
+  "map": {
+    "id": "duels:2v2urban"
+  },
+  "players": {
+    "min": 4,
+    "max": 4
+  },
+  "team_size": 2,
+  "armor": [
+    {
+      "id": "diamond_helmet",
+      "Count": 1
+    },
+    {
+      "id": "diamond_chestplate",
+      "Count": 1
+    },
+    {
+      "id": "diamond_leggings",
+      "Count": 1
+    },
+    {
+      "id": "diamond_boots",
+      "Count": 1
+    }
+  ],
+  "items": [
+    {
+      "id": "diamond_axe",
+      "Count": 1
+    },
+    {
+      "id": "diamond_sword",
+      "Count": 1
+    },
+    {
+      "id": "crossbow",
+      "Count": 1
+    },
+    {
+      "id": "bow",
+      "Count": 1
+    },
+    {
+      "id": "golden_carrot",
+      "Count": 1
+    },
+    {
+      "id": "arrow",
+      "Count": 6
+    }
+  ]
+}
