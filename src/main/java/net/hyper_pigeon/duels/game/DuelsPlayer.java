@@ -14,4 +14,8 @@ public class DuelsPlayer {
     public ServerPlayerEntity getServerPlayerEntity() {
         return serverPlayerEntity;
     }
+
+    public GameTeam getTeam(){
+        return team;
+    }
 }

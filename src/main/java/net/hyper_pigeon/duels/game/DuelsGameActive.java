@@ -32,6 +32,7 @@ import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class DuelsGameActive {
     private final DuelsConfig config;
@@ -77,7 +78,7 @@ public class DuelsGameActive {
     }
 
     private ActionResult attackEntity(ServerPlayerEntity serverPlayerEntity, Hand hand, Entity entity, EntityHitResult entityHitResult) {
-        if(entity instanceof ServerPlayerEntity && (participants.get(PlayerRef.of(serverPlayerEntity)).team).equals(participants.get(PlayerRef.of((ServerPlayerEntity) entity)).team)) {
+        if((this.config.mode().equals("duos") && entity instanceof ServerPlayerEntity hitPlayer && getTeam(serverPlayerEntity) != null && getTeam(hitPlayer) != null && Objects.equals(getTeam(serverPlayerEntity), getTeam(hitPlayer)))) {
             return ActionResult.FAIL;
         }
         return ActionResult.PASS;
@@ -99,6 +100,12 @@ public class DuelsGameActive {
         }
     }
 
+    private GameTeam getTeam(ServerPlayerEntity player){
+        if(participants.get(PlayerRef.of(player)) != null){
+            return participants.get(PlayerRef.of(player)).getTeam();
+        }
+        return null;
+    }
 
     private void removePlayer(ServerPlayerEntity player) {
         if(participants.containsKey(PlayerRef.of(player))) {
