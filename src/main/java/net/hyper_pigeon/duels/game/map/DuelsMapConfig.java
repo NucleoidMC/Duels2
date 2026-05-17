@@ -2,7 +2,7 @@ package net.hyper_pigeon.duels.game.map;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 /*

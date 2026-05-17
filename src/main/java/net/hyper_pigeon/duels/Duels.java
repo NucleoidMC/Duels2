@@ -3,18 +3,18 @@ package net.hyper_pigeon.duels;
 import net.fabricmc.api.ModInitializer;
 import net.hyper_pigeon.duels.game.DuelsConfig;
 import net.hyper_pigeon.duels.game.DuelsGameWaiting;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import xyz.nucleoid.plasmid.game.GameType;
+import xyz.nucleoid.plasmid.api.game.GameTypes;
+import xyz.nucleoid.plasmid.api.game.GameType;
 
 public class Duels implements ModInitializer {
 
     public static final String ID = "duels";
     public static final Logger LOGGER = LogManager.getLogger(ID);
-
-    public static final GameType<DuelsConfig> TYPE = GameType.register(
-            new Identifier(ID, "duels"),
+    public static final GameType<DuelsConfig> TYPE = GameTypes.register(
+            Identifier.fromNamespaceAndPath(ID, "duels"),
             DuelsConfig.CODEC,
             DuelsGameWaiting::open
     );

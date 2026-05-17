@@ -1,18 +1,17 @@
 {
   "type": "duels:duels",
-  "mode": "duos",
-  "icon": "minecraft:diamond_sword",
+  "mode": "solo",
   "description": [{
-    "translate": "gameType.duels.duels.desc.1"
+    "translate": "gameType.duels.duels.desc.2"
   }],
   "map": {
-    "id": "duels:2v2urban"
+    "id": "duels:mountains"
   },
   "players": {
-    "min": 4,
-    "max": 4
+    "min": 2,
+    "max": 2
   },
-  "team_size": 2,
+  "team_size": 1,
   "armor": [
     {
       "id": "iron_helmet",

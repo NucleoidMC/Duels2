@@ -1,7 +1,6 @@
 {
   "type": "duels:duels",
   "mode": "duos",
-  "icon": "minecraft:diamond_sword",
   "description": [{
     "translate": "gameType.duels.duels.desc.3"
   }],

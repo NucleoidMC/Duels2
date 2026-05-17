@@ -3,29 +3,32 @@ package net.hyper_pigeon.duels.game;
 import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import net.hyper_pigeon.duels.game.map.DuelsMap;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.GameMode;
-import xyz.nucleoid.plasmid.game.GameCloseReason;
-import xyz.nucleoid.plasmid.game.GameSpace;
-import xyz.nucleoid.plasmid.game.common.team.GameTeam;
-import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
-import xyz.nucleoid.plasmid.game.event.GamePlayerEvents;
-import xyz.nucleoid.plasmid.game.player.PlayerOffer;
-import xyz.nucleoid.plasmid.game.player.PlayerOfferResult;
-import xyz.nucleoid.plasmid.game.rule.GameRuleType;
-import xyz.nucleoid.plasmid.util.ItemStackBuilder;
-import xyz.nucleoid.plasmid.util.PlayerRef;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.GameType;
+import xyz.nucleoid.plasmid.api.game.GameCloseReason;
+import xyz.nucleoid.plasmid.api.game.GameSpace;
+import xyz.nucleoid.plasmid.api.game.common.team.GameTeam;
+import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
+import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
+import xyz.nucleoid.plasmid.api.game.player.JoinAcceptor;
+import xyz.nucleoid.plasmid.api.game.player.JoinAcceptorResult;
+import xyz.nucleoid.plasmid.api.game.player.JoinOffer;
+import xyz.nucleoid.plasmid.api.game.rule.GameRuleType;
+import xyz.nucleoid.plasmid.api.util.ItemStackBuilder;
+import xyz.nucleoid.plasmid.api.util.PlayerRef;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.player.PlayerAttackEntityEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
@@ -37,9 +40,8 @@ import java.util.Objects;
 public class DuelsGameActive {
     private final DuelsConfig config;
     private final GameSpace gameSpace;
-    private final ServerWorld world;
+    private final ServerLevel level;
     private final DuelsMap gameMap;
-    //private final ArrayList<PlayerRef> participants;
     public final Object2ObjectMap<PlayerRef, DuelsPlayer> participants;
     public final Multimap<GameTeam, PlayerRef> teamPlayers;
 
@@ -48,40 +50,46 @@ public class DuelsGameActive {
     private GamePhase gamePhase;
     private long finishTime;
 
-    public DuelsGameActive(DuelsConfig config, GameSpace gameSpace, ServerWorld world, DuelsMap gameMap, Multimap<GameTeam, PlayerRef> teamPlayers, Object2ObjectMap<PlayerRef, DuelsPlayer> participants) {
+    public DuelsGameActive(DuelsConfig config, GameSpace gameSpace, ServerLevel level, DuelsMap gameMap, Multimap<GameTeam, PlayerRef> teamPlayers, Object2ObjectMap<PlayerRef, DuelsPlayer> participants) {
         this.config = config;
         this.gameSpace = gameSpace;
-        this.world = world;
+        this.level = level;
         this.gameMap = gameMap;
         this.teamPlayers = teamPlayers;
         this.participants = participants;
         gamePhase = GamePhase.GAME_CONTINUE;
     }
 
-    public static void open(DuelsConfig config,GameSpace gameSpace,  ServerWorld world, DuelsMap duelsMap,Multimap<GameTeam, PlayerRef> teamPlayers,Object2ObjectMap<PlayerRef, DuelsPlayer> participants){
+    public static void open(DuelsConfig config, GameSpace gameSpace, ServerLevel level, DuelsMap duelsMap, Multimap<GameTeam, PlayerRef> teamPlayers, Object2ObjectMap<PlayerRef, DuelsPlayer> participants){
         gameSpace.setActivity(game -> {
-            DuelsGameActive active = new DuelsGameActive(config, gameSpace, world, duelsMap, teamPlayers, participants);
+            DuelsGameActive active = new DuelsGameActive(config, gameSpace, level, duelsMap, teamPlayers, participants);
             runningGames.add(active);
-
 
             game.allow(GameRuleType.PVP);
             game.deny(GameRuleType.BREAK_BLOCKS);
 
             game.listen(GameActivityEvents.TICK, active::tick);
-            game.listen(GamePlayerEvents.OFFER, active::onPlayerOffer);
+            game.listen(GamePlayerEvents.OFFER, JoinOffer::acceptSpectators);
+            game.listen(GamePlayerEvents.ACCEPT, active::acceptPlayer);
             game.listen(PlayerDeathEvent.EVENT, active::onPlayerDeath);
             game.listen(GameActivityEvents.ENABLE, active::onEnable);
             game.listen(GamePlayerEvents.REMOVE, active::removePlayer);
             game.listen(PlayerAttackEntityEvent.EVENT, active::attackEntity);
-
         });
     }
 
-    private ActionResult attackEntity(ServerPlayerEntity serverPlayerEntity, Hand hand, Entity entity, EntityHitResult entityHitResult) {
-        if((this.config.mode().equals("duos") && entity instanceof ServerPlayerEntity hitPlayer && getTeam(serverPlayerEntity) != null && getTeam(hitPlayer) != null && Objects.equals(getTeam(serverPlayerEntity), getTeam(hitPlayer)))) {
-            return ActionResult.FAIL;
+    private JoinAcceptorResult acceptPlayer(JoinAcceptor acceptor) {
+        Vec3 pos = gameMap.getSpawn1().centerTop();
+        return acceptor.teleport(level, pos).thenRunForEach((plr) -> {
+            plr.setGameMode(GameType.SPECTATOR);
+        });
+    }
+
+    private EventResult attackEntity(ServerPlayer serverPlayerEntity, InteractionHand hand, Entity entity, EntityHitResult entityHitResult) {
+        if((this.config.mode().equals("duos") && entity instanceof ServerPlayer hitPlayer && getTeam(serverPlayerEntity) != null && getTeam(hitPlayer) != null && Objects.equals(getTeam(serverPlayerEntity), getTeam(hitPlayer)))) {
+            return EventResult.DENY;
         }
-        return ActionResult.PASS;
+        return EventResult.PASS;
     }
 
     private void tick() {
@@ -90,7 +98,7 @@ public class DuelsGameActive {
                 break;
             }
             case GAME_ENDING -> {
-                if(world.getTime() >= finishTime){
+                if(level.getGameTime() >= finishTime){
                     gamePhase = GamePhase.GAME_FINISHED;
                 }
             }
@@ -100,110 +108,68 @@ public class DuelsGameActive {
         }
     }
 
-    private GameTeam getTeam(ServerPlayerEntity player){
+    private GameTeam getTeam(ServerPlayer player){
         if(participants.get(PlayerRef.of(player)) != null){
             return participants.get(PlayerRef.of(player)).getTeam();
         }
         return null;
     }
 
-    private void removePlayer(ServerPlayerEntity player) {
+    private void removePlayer(ServerPlayer player) {
         if(participants.containsKey(PlayerRef.of(player))) {
-            GameTeam gameTeam = participants.get(PlayerRef.of(player)).team;
-
             this.participants.remove(PlayerRef.of(player));
             this.teamPlayers.values().remove(PlayerRef.of(player));
-
-
             tryEndDuel();
         }
-
     }
 
 
-    public void equipPlayer(ServerPlayerEntity player) {
-        for (ItemStack itemStack : this.config.items()) {
-            player.getInventory().insertStack(ItemStackBuilder.of(itemStack).build());
+    public void equipPlayer(ServerPlayer player) {
+        for (ItemStackTemplate itemStackTemplate : this.config.items()) {
+            player.getInventory().add(itemStackTemplate.create());
         }
 
-        player.equipStack(EquipmentSlot.HEAD, ItemStackBuilder.of(this.config.armor().get(0)).build());
-        player.equipStack(EquipmentSlot.CHEST, ItemStackBuilder.of(this.config.armor().get(1)).build());
-        player.equipStack(EquipmentSlot.LEGS, ItemStackBuilder.of(this.config.armor().get(2)).build());
-        player.equipStack(EquipmentSlot.FEET, ItemStackBuilder.of(this.config.armor().get(3)).build());
+        player.setItemSlot(EquipmentSlot.HEAD, this.config.armor().get(0).create());
+        player.setItemSlot(EquipmentSlot.CHEST,this.config.armor().get(1).create());
+        player.setItemSlot(EquipmentSlot.LEGS, this.config.armor().get(2).create());
+        player.setItemSlot(EquipmentSlot.FEET, this.config.armor().get(3).create());
 
     }
 
     private void onEnable() {
-//        if(config.mode().equals("solo")){
-//            Iterator<Vec3d> spawnIterator = new ArrayList<Vec3d>(List.of(gameMap.getSpawn1().centerTop(),gameMap.getSpawn2().centerTop())).iterator();
-//            for (GameTeam team : teamPlayers.keySet()) {
-//                Vec3d spawn = spawnIterator.next();
-//                for (PlayerRef ref : teamPlayers.get(team)) {
-//                    participants.get(ref).getServerPlayerEntity().requestTeleport(spawn.getX(),spawn.getY(),spawn.getZ());
-//                    participants.get(ref).getServerPlayerEntity().refreshPositionAfterTeleport(spawn.getX(),spawn.getY(),spawn.getZ());
-//                }
-//            }
-//        }
-        Iterator<Vec3d> spawnIterator = new ArrayList<Vec3d>(List.of(gameMap.getSpawn1().centerTop(),gameMap.getSpawn2().centerTop())).iterator();
+        Iterator<Vec3> spawnIterator = new ArrayList<Vec3>(List.of(gameMap.getSpawn1().centerTop(),gameMap.getSpawn2().centerTop())).iterator();
         for (GameTeam team : teamPlayers.keySet()) {
-            Vec3d spawn = spawnIterator.next();
+            Vec3 spawn = spawnIterator.next();
             for (PlayerRef ref : teamPlayers.get(team)) {
-                participants.get(ref).getServerPlayerEntity().requestTeleport(spawn.getX(),spawn.getY(),spawn.getZ());
-                participants.get(ref).getServerPlayerEntity().refreshPositionAfterTeleport(spawn.getX(),spawn.getY(),spawn.getZ());
+                participants.get(ref).getServerPlayerEntity().teleportTo(spawn.x(),spawn.y(),spawn.z());
+                participants.get(ref).getServerPlayerEntity().snapTo(spawn.x(),spawn.y(),spawn.z());
                 equipPlayer(participants.get(ref).getServerPlayerEntity());
             }
         }
-
     }
 
-    private ActionResult onPlayerDeath(ServerPlayerEntity serverPlayerEntity, DamageSource source) {
-//        BlockPos teleportPos = new BlockPos(0,65,0);
-//        serverPlayerEntity.requestTeleport(0,65,0);
-//        serverPlayerEntity.refreshPositionAndAngles(teleportPos,serverPlayerEntity.getYaw(),serverPlayerEntity.getPitch());
-
-        serverPlayerEntity.changeGameMode(GameMode.SPECTATOR);
+    private EventResult onPlayerDeath(ServerPlayer serverPlayerEntity, DamageSource source) {
+        serverPlayerEntity.setGameMode(GameType.SPECTATOR);
         removePlayer(serverPlayerEntity);
-        return ActionResult.FAIL;
-    }
-
-    private PlayerOfferResult onPlayerOffer(PlayerOffer playerOffer) {
-        ServerPlayerEntity player = playerOffer.player();
-        Vec3d vec3d = gameMap.getSpawn1().centerTop();
-        return playerOffer.accept(this.world, vec3d)
-                .and(() -> {
-                    player.changeGameMode(GameMode.SPECTATOR);
-                });
+        return EventResult.DENY;
     }
 
     public void tryEndDuel(){
-//        if(this.config.mode().equals("solo") && participants.size() == 1) {
-//            this.gameSpace.getPlayers().
-//                    sendMessage(Text.of(participants.get(0).getServerPlayerEntity().getName().getString() + " has won the duel!"));
-//
-//            gamePhase = GamePhase.GAME_ENDING;
-//            this.finishTime = world.getTime() + 20*10;
-//        }
-        if(this.teamPlayers.keySet().size() == 1){
+        if(this.teamPlayers.keySet().size() == 1) {
             DuelsPlayer duelsPlayer = participants.values().iterator().next();
             if(this.config.mode().equals("solo")) {
-                this.gameSpace.getPlayers().
-                    sendMessage(Text.of(duelsPlayer.getServerPlayerEntity().getName().getString() + " has won the duel!"));
+                this.gameSpace.getPlayers().sendMessage(Component.translatable("duels.win_text", duelsPlayer.getServerPlayerEntity().getName()));
             }
-            else{
+            else {
                 GameTeam winningTeam = duelsPlayer.team;
                 this.gameSpace.getPlayers().sendMessage(
-                        Text.of(winningTeam.config().name().getString() + " has won the duel!")
+                        Component.translatable("duels.win_text", winningTeam.config().name())
                 );
             }
-
+            this.gameSpace.getPlayers().playSound(SoundEvents.PLAYER_LEVELUP, SoundSource.MASTER, 1, 1);
 
             gamePhase = GamePhase.GAME_ENDING;
-            this.finishTime = world.getTime() + 20*10;
+            this.finishTime = level.getGameTime() + 20*10;
         }
     }
-
-
-
-
-
 }
