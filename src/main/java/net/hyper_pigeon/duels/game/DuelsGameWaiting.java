@@ -141,21 +141,21 @@ public class DuelsGameWaiting {
         return GameResult.ok();
     }
 
-    private EventResult onPlayerDeath(ServerPlayer serverPlayerEntity, DamageSource source) {
-        serverPlayerEntity.setHealth(20.0F);
+    private EventResult onPlayerDeath(ServerPlayer serverPlayer, DamageSource source) {
+        serverPlayer.setHealth(20.0F);
         Vec3 teleportPos = duelsMap.getSpawn1().centerTop();
-        serverPlayerEntity.teleportTo(teleportPos.x(), teleportPos.y(), teleportPos.z());
+        serverPlayer.teleportTo(teleportPos.x(), teleportPos.y(), teleportPos.z());
         return EventResult.ALLOW;
     }
 
-    private void onPlayerJoin(ServerPlayer serverPlayerEntity) {
+    private void onPlayerJoin(ServerPlayer serverPlayer) {
         if (this.participants.size() < this.config.playerConfig().playerConfig().maxPlayers().getAsInt()) {
-            DuelsPlayer duelsPlayer = new DuelsPlayer(serverPlayerEntity);
-            participants.put(PlayerRef.of(serverPlayerEntity), duelsPlayer);
+            DuelsPlayer duelsPlayer = new DuelsPlayer(serverPlayer);
+            participants.put(PlayerRef.of(serverPlayer), duelsPlayer);
         }
     }
 
-    private void playerLeave (ServerPlayer serverPlayerEntity){
-        participants.remove(PlayerRef.of(serverPlayerEntity));
+    private void playerLeave (ServerPlayer serverPlayer){
+        participants.remove(PlayerRef.of(serverPlayer));
     }
 }

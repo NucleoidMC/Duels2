@@ -6,6 +6,10 @@
   "gameType.duels.duels.desc.2": "Fight in a 1v1 battle with classic kits!",
   "gameType.duels.duels.desc.3": "Fight in a 2v2 battle with standard diamond kits!",
   "gameType.duels.duels.desc.4": "Fight in a 1v1 battle with standard diamond kits!",
+  "gameType.duels.duels.desc.5": "Fight in a 2v2 battle with OP diamond kits!",
+  "gameType.duels.duels.desc.6": "Fight in a 1v1 battle with OP diamond kits!",
+  "gameType.duels.duels.desc.7": "Fight in a 2v2 battle with maces!",
+  "gameType.duels.duels.desc.8": "Fight in a 1v1 battle with maces!",
   "duels.win_text": "%s has won the duel!",
   "sidebar.duels.title": "Duels"
 }

@@ -15,45 +15,45 @@
   "armor": [
     {
       "id": "diamond_helmet",
-      "Count": 1
+      "count": 1
     },
     {
       "id": "diamond_chestplate",
-      "Count": 1
+      "count": 1
     },
     {
       "id": "diamond_leggings",
-      "Count": 1
+      "count": 1
     },
     {
       "id": "diamond_boots",
-      "Count": 1
+      "count": 1
     }
   ],
   "items": [
     {
       "id": "diamond_axe",
-      "Count": 1
+      "count": 1
     },
     {
       "id": "diamond_sword",
-      "Count": 1
+      "count": 1
     },
     {
       "id": "crossbow",
-      "Count": 1
+      "count": 1
     },
     {
       "id": "bow",
-      "Count": 1
+      "count": 1
     },
     {
       "id": "golden_carrot",
-      "Count": 1
+      "count": 1
     },
     {
       "id": "arrow",
-      "Count": 6
+      "count": 6
     }
   ]
 }

@@ -2,7 +2,7 @@
   "type": "duels:duels",
   "mode": "duos",
   "description": [{
-    "translate": "gameType.duels.duels.desc.1"
+    "translate": "gameType.duels.duels.desc.7"
   }],
   "map": {
     "id": "duels:2v2urban"
@@ -14,58 +14,60 @@
   "team_size": 2,
   "armor": [
     {
-      "id": "iron_helmet",
+      "id": "diamond_helmet",
       "count": 1,
       "components": {
         "minecraft:enchantments": {
-          "protection": 1
+          "protection": 4
         }
       }
     },
     {
-      "id": "iron_chestplate",
+      "id": "diamond_chestplate",
       "count": 1,
       "components": {
         "minecraft:enchantments": {
-          "protection": 1
+          "protection": 4
         }
       }
     },
     {
-      "id": "iron_leggings",
+      "id": "diamond_leggings",
       "count": 1,
       "components": {
         "minecraft:enchantments": {
-          "protection": 1
+          "protection": 4
         }
       }
     },
     {
-      "id": "iron_boots",
-      "Count": 1,
+      "id": "diamond_boots",
+      "count": 1,
       "components": {
         "minecraft:enchantments": {
-          "protection": 1
+          "protection": 4
         }
       }
     }
   ],
   "items": [
     {
-      "id": "iron_sword",
-      "Count": 1
+      "id": "mace",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "wind_burst": 3,
+          "density": 5
+        }
+      }
     },
     {
-      "id": "bow",
-      "Count": 1
+      "id": "wind_charge",
+      "count": 64
     },
     {
-      "id": "golden_carrot",
-      "Count": 1
-    },
-    {
-      "id": "arrow",
-      "Count": 8
+      "id": "golden_apple",
+      "count": 4
     }
   ]
 }

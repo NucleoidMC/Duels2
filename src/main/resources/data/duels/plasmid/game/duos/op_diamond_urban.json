@@ -2,7 +2,7 @@
   "type": "duels:duels",
   "mode": "duos",
   "description": [{
-    "translate": "gameType.duels.duels.desc.3"
+    "translate": "gameType.duels.duels.desc.5"
   }],
   "map": {
     "id": "duels:2v2urban"
@@ -15,85 +15,64 @@
   "armor": [
     {
       "id": "diamond_helmet",
-      "Count": 1,
-      "tag": {
-        "Enchantments": [
-          {
-            "lvl": 4,
-            "id": "protection"
-          }
-        ]
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4
+        }
       }
     },
     {
       "id": "diamond_chestplate",
-      "Count": 1,
-      "tag": {
-        "Enchantments": [
-          {
-            "lvl": 4,
-            "id": "protection"
-          }
-        ]
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4
+        }
       }
     },
     {
       "id": "diamond_leggings",
-      "Count": 1,
-      "tag": {
-        "Enchantments": [
-          {
-            "lvl": 4,
-            "id": "protection"
-          }
-        ]
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4
+        }
       }
     },
     {
       "id": "diamond_boots",
-      "Count": 1,
-      "tag": {
-        "Enchantments": [
-          {
-            "lvl": 4,
-            "id": "protection"
-          }
-        ]
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4
+        }
       }
     }
   ],
   "items": [
     {
       "id": "diamond_axe",
-      "Count": 1,
-      "tag": {
-        "Enchantments": [
-          {
-            "lvl": 3,
-            "id": "sharpness"
-          }
-        ]
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "sharpness": 3
+        }
       }
     },
     {
       "id": "diamond_sword",
-      "Count": 1,
-      "tag": {
-        "Enchantments": [
-          {
-            "lvl": 5,
-            "id": "sharpness"
-          },
-          {
-            "lvl": 3,
-            "id": "sweeping_edge"
-          }
-        ]
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "sharpness": 5,
+          "sweeping_edge": 3
+        }
       }
     },
     {
       "id": "golden_apple",
-      "Count": 6
+      "count": 6
     }
   ]
 }

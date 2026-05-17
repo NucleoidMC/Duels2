@@ -2,7 +2,7 @@
   "type": "duels:duels",
   "mode": "solo",
   "description": [{
-    "translate": "gameType.duels.duels.desc.6"
+    "translate": "gameType.duels.duels.desc.8"
   }],
   "map": {
     "id": "duels:mountains"
@@ -52,27 +52,22 @@
   ],
   "items": [
     {
-      "id": "diamond_axe",
+      "id": "mace",
       "count": 1,
       "components": {
         "minecraft:enchantments": {
-          "sharpness": 3
+          "wind_burst": 3,
+          "density": 5
         }
       }
     },
     {
-      "id": "diamond_sword",
-      "count": 1,
-      "components": {
-        "minecraft:enchantments": {
-          "sharpness": 5,
-          "sweeping_edge": 3
-        }
-      }
+      "id": "wind_charge",
+      "count": 64
     },
     {
       "id": "golden_apple",
-      "count": 6
+      "count": 4
     }
   ]
 }

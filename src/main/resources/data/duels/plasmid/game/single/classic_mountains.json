@@ -15,42 +15,38 @@
   "armor": [
     {
       "id": "iron_helmet",
-      "Count": 1,
-      "tag": {
-        "Enchantments": [
-          {
-            "lvl": 1,
-            "id": "protection"
-          }
-        ]
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 1
+        }
       }
     },
     {
       "id": "iron_chestplate",
-      "Count": 1,
-      "tag": {
-        "Enchantments": [
-          {
-            "lvl": 1,
-            "id": "protection"
-          }
-        ]
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 1
+        }
       }
     },
     {
       "id": "iron_leggings",
-      "Count": 1
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 1
+        }
+      }
     },
     {
       "id": "iron_boots",
       "Count": 1,
-      "tag": {
-        "Enchantments": [
-          {
-            "lvl": 1,
-            "id": "protection"
-          }
-        ]
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 1
+        }
       }
     }
   ],

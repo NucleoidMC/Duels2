@@ -5,14 +5,14 @@ import xyz.nucleoid.plasmid.api.game.common.team.GameTeam;
 
 public class DuelsPlayer {
     public GameTeam team = null;
-    private final ServerPlayer serverPlayerEntity;
+    private final ServerPlayer serverPlayer;
 
-    public DuelsPlayer(ServerPlayer serverPlayerEntity) {
-        this.serverPlayerEntity = serverPlayerEntity;
+    public DuelsPlayer(ServerPlayer serverPlayer) {
+        this.serverPlayer = serverPlayer;
     }
 
-    public ServerPlayer getServerPlayerEntity() {
-        return serverPlayerEntity;
+    public ServerPlayer getServerPlayer() {
+        return serverPlayer;
     }
 
     public GameTeam getTeam(){
