@@ -42,7 +42,7 @@
     },
     {
       "id": "iron_boots",
-      "Count": 1,
+      "count": 1,
       "components": {
         "minecraft:enchantments": {
           "protection": 1
@@ -53,19 +53,19 @@
   "items": [
     {
       "id": "iron_sword",
-      "Count": 1
+      "count": 1
     },
     {
       "id": "bow",
-      "Count": 1
+      "count": 1
     },
     {
       "id": "golden_carrot",
-      "Count": 1
+      "count": 4
     },
     {
       "id": "arrow",
-      "Count": 8
+      "count": 8
     }
   ]
 }

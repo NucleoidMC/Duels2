@@ -49,11 +49,15 @@
     },
     {
       "id": "golden_carrot",
-      "count": 1
+      "count": 8
     },
     {
       "id": "arrow",
       "count": 6
     }
-  ]
+  ],
+  "offhand": {
+    "id": "shield",
+    "count": 1
+  }
 }

@@ -8,8 +8,9 @@ import net.minecraft.world.item.ItemStackTemplate;
 import xyz.nucleoid.plasmid.api.game.common.config.WaitingLobbyConfig;
 
 import java.util.List;
+import java.util.Optional;
 
-public record DuelsConfig(String mode, WaitingLobbyConfig playerConfig, int teamSize, List<ItemStackTemplate> armor, List<ItemStackTemplate> items, DuelsMapConfig mapConfig) {
+public record DuelsConfig(String mode, WaitingLobbyConfig playerConfig, int teamSize, List<ItemStackTemplate> armor, List<ItemStackTemplate> items, Optional<ItemStackTemplate> offhand, DuelsMapConfig mapConfig) {
     public static final MapCodec<DuelsConfig> CODEC = RecordCodecBuilder.mapCodec(instance -> {
         return instance.group(
                 Codec.STRING.fieldOf("mode").forGetter(DuelsConfig::mode),
@@ -17,6 +18,7 @@ public record DuelsConfig(String mode, WaitingLobbyConfig playerConfig, int team
                 Codec.INT.optionalFieldOf("team_size", 1).forGetter(DuelsConfig::teamSize),
                 Codec.list(ItemStackTemplate.CODEC).fieldOf("armor").forGetter(DuelsConfig::armor),
                 Codec.list(ItemStackTemplate.CODEC).fieldOf("items").forGetter(DuelsConfig::items),
+                ItemStackTemplate.CODEC.optionalFieldOf("offhand").forGetter(DuelsConfig::offhand),
                 DuelsMapConfig.CODEC.fieldOf("map").forGetter(DuelsConfig::mapConfig)
         ).apply(instance, DuelsConfig::new);
     });

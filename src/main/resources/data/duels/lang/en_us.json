@@ -10,6 +10,8 @@
   "gameType.duels.duels.desc.6": "Fight in a 1v1 battle with OP diamond kits!",
   "gameType.duels.duels.desc.7": "Fight in a 2v2 battle with maces!",
   "gameType.duels.duels.desc.8": "Fight in a 1v1 battle with maces!",
+  "gameType.duels.duels.desc.9": "Fight in a 2v2 battle with OP diamond kits and potions!",
+  "gameType.duels.duels.desc.10": "Fight in a 1v1 battle with OP diamond kits and potions!",
   "duels.win_text": "%s has won the duel!",
   "sidebar.duels.title": "Duels"
 }

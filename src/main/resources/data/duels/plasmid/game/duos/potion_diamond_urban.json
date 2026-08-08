@@ -1,0 +1,176 @@
+{
+  "type": "duels:duels",
+  "mode": "solo",
+  "description": [{
+    "translate": "gameType.duels.duels.desc.9"
+  }],
+  "map": {
+    "id": "duels:2v2urban"
+  },
+  "players": {
+    "min": 4,
+    "max": 4
+  },
+  "team_size": 1,
+  "armor": [
+    {
+      "id": "diamond_helmet",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4,
+          "unbreaking": 3
+        }
+      }
+    },
+    {
+      "id": "diamond_chestplate",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4,
+          "unbreaking": 3
+        }
+      }
+    },
+    {
+      "id": "diamond_leggings",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4,
+          "unbreaking": 3
+        }
+      }
+    },
+    {
+      "id": "diamond_boots",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4,
+          "unbreaking": 3
+        }
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "diamond_axe",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "sharpness": 3,
+          "unbreaking": 3
+        }
+      }
+    },
+    {
+      "id": "diamond_sword",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "sharpness": 3,
+          "fire_aspect": 2,
+          "unbreaking": 3
+        }
+      }
+    },
+    {
+      "id": "enchanted_golden_apple",
+      "count": 32
+    },
+    {
+      "id": "golden_carrot",
+      "count": 64
+    },
+    {
+      "id": "wind_charge",
+      "count": 64
+    },
+    {
+      "id": "totem_of_undying",
+      "count": 1
+    },
+    {
+      "id": "splash_potion",
+      "components": {
+        "potion_contents": {
+          "potion": "long_swiftness"
+        }
+      }
+    },
+    {
+      "id": "splash_potion",
+      "components": {
+        "potion_contents": {
+          "potion": "long_swiftness"
+        }
+      }
+    },
+    {
+      "id": "splash_potion",
+      "components": {
+        "potion_contents": {
+          "potion": "long_swiftness"
+        }
+      }
+    },
+    {
+      "id": "splash_potion",
+      "components": {
+        "potion_contents": {
+          "potion": "long_fire_resistance"
+        }
+      }
+    },
+    {
+      "id": "splash_potion",
+      "components": {
+        "potion_contents": {
+          "potion": "long_fire_resistance"
+        }
+      }
+    },
+    {
+      "id": "splash_potion",
+      "components": {
+        "potion_contents": {
+          "potion": "long_fire_resistance"
+        }
+      }
+    },
+    {
+      "id": "splash_potion",
+      "components": {
+        "potion_contents": {
+          "potion": "long_strength"
+        }
+      }
+    },
+    {
+      "id": "splash_potion",
+      "components": {
+        "potion_contents": {
+          "potion": "long_strength"
+        }
+      }
+    },
+    {
+      "id": "splash_potion",
+      "components": {
+        "potion_contents": {
+          "potion": "long_strength"
+        }
+      }
+    }
+  ],
+  "offhand": {
+    "id": "shield",
+    "components": {
+      "minecraft:enchantments": {
+        "unbreaking": 3
+      }
+    }
+  }
+}

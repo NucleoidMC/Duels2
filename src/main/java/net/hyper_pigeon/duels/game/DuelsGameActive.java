@@ -141,7 +141,9 @@ public class DuelsGameActive {
         for (ItemStackTemplate itemStackTemplate : this.config.items()) {
             player.getInventory().add(itemStackTemplate.create());
         }
-
+        if (this.config.offhand().isPresent()) {
+            player.setItemInHand(InteractionHand.OFF_HAND, this.config.offhand().get().create());
+        }
         player.setItemSlot(EquipmentSlot.HEAD, this.config.armor().get(0).create());
         player.setItemSlot(EquipmentSlot.CHEST,this.config.armor().get(1).create());
         player.setItemSlot(EquipmentSlot.LEGS, this.config.armor().get(2).create());
