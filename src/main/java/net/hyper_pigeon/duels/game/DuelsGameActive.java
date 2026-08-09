@@ -32,6 +32,7 @@ import xyz.nucleoid.plasmid.api.util.PlayerRef;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.item.ItemUseEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerAttackEntityEvent;
+import xyz.nucleoid.stimuli.event.player.PlayerConsumeHungerEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
 import java.util.ArrayList;
@@ -68,8 +69,8 @@ public class DuelsGameActive {
             runningGames.add(active);
 
             game.allow(GameRuleType.PVP);
-            game.deny(GameRuleType.HUNGER);
-            game.deny(GameRuleType.SATURATED_REGENERATION);
+            game.allow(GameRuleType.HUNGER);
+            game.allow(GameRuleType.SATURATED_REGENERATION);
             game.deny(GameRuleType.BREAK_BLOCKS);
 
             game.listen(GameActivityEvents.TICK, active::tick);
@@ -79,8 +80,16 @@ public class DuelsGameActive {
             game.listen(GameActivityEvents.ENABLE, active::onEnable);
             game.listen(GamePlayerEvents.REMOVE, active::removePlayer);
             game.listen(PlayerAttackEntityEvent.EVENT, active::attackEntity);
+            game.listen(PlayerConsumeHungerEvent.EVENT, active::consumeHunger);
             game.listen(ItemUseEvent.EVENT, active::onItemUse);
         });
+    }
+
+    private EventResult consumeHunger(ServerPlayer player, int foodLevel, float saturation, float exhaustion) {
+        if (foodLevel <= 16) {
+            return EventResult.DENY;
+        }
+        return EventResult.PASS;
     }
 
     private JoinAcceptorResult acceptPlayer(JoinAcceptor acceptor) {
