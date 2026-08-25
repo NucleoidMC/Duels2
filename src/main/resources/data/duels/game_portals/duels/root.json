@@ -1,0 +1,25 @@
+{
+  "type": "nucleoid_extras:styled/advanced_menu",
+  "name": {
+    "translate": "gameType.duels.duels"
+  },
+  "icon": "minecraft:iron_sword",
+  "entries": [
+    {
+      "type": "nucleoid_extras:quick_portal",
+      "portal": "duels:duels/single/root",
+      "quick_portal": "duels:duels/single/random",
+      "message": {
+        "translate": "text.duels.ui.action.maps"
+      }
+    },
+    {
+      "type": "nucleoid_extras:quick_portal",
+      "portal": "duels:duels/duos/root",
+      "quick_portal": "duels:duels/duos/random",
+      "message": {
+        "translate": "text.duels.ui.action.maps"
+      }
+    }
+  ]
+}

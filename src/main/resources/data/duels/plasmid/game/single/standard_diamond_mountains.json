@@ -4,6 +4,7 @@
   "description": [{
     "translate": "gameType.duels.duels.desc.4"
   }],
+  "icon": "diamond_sword",
   "map": {
     "id": "duels:mountains"
   },

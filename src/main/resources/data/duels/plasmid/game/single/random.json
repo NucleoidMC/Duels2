@@ -1,0 +1,14 @@
+{
+  "type": "plasmid:random",
+  "games": [
+    "duels:single/classic_mountains",
+    "duels:single/standard_diamond_mountains",
+    "duels:single/op_diamond_mountains",
+    "duels:single/mace_mountains",
+    "duels:single/potion_diamond_mountains"
+  ],
+  "name": {
+    "translate": "game.nucleoid.random"
+  },
+  "icon": "emerald"
+}

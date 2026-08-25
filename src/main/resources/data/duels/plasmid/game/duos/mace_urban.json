@@ -4,6 +4,7 @@
   "description": [{
     "translate": "gameType.duels.duels.desc.7"
   }],
+  "icon": "mace",
   "map": {
     "id": "duels:2v2urban"
   },

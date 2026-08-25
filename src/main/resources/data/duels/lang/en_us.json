@@ -13,5 +13,10 @@
   "gameType.duels.duels.desc.9": "Fight in a 2v2 battle with OP diamond kits and potions!",
   "gameType.duels.duels.desc.10": "Fight in a 1v1 battle with OP diamond kits and potions!",
   "duels.win_text": "%s has won the duel!",
-  "sidebar.duels.title": "Duels"
+
+  "sidebar.duels.title": "Duels",
+  "text.duels.ui.action.maps": "Right-click to view maps",
+  "text.duels.ui.action.modes": "Right-click to view modes",
+  "game.nucleoid.duos": "Duos",
+  "game.nucleoid.singles": "Singles"
 }

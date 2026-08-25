@@ -4,6 +4,7 @@
   "description": [{
     "translate": "gameType.duels.duels.desc.3"
   }],
+  "icon": "diamond_sword",
   "map": {
     "id": "duels:2v2urban"
   },

@@ -4,6 +4,7 @@
   "description": [{
     "translate": "gameType.duels.duels.desc.10"
   }],
+  "icon": "splash_potion",
   "map": {
     "id": "duels:mountains"
   },

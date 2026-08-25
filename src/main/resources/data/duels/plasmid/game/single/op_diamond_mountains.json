@@ -4,6 +4,7 @@
   "description": [{
     "translate": "gameType.duels.duels.desc.6"
   }],
+  "icon": "enchanted_golden_apple",
   "map": {
     "id": "duels:mountains"
   },
