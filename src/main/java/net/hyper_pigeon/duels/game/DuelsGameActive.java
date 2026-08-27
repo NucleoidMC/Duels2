@@ -1,12 +1,18 @@
 package net.hyper_pigeon.duels.game;
 
 import com.google.common.collect.Multimap;
+import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import eu.pb4.sgui.api.gui.SimpleGui;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import net.hyper_pigeon.duels.Duels;
 import net.hyper_pigeon.duels.game.map.DuelsMap;
+import net.minecraft.SharedConstants;
+import net.minecraft.core.Holder;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
@@ -19,16 +25,15 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.GameType;
-import xyz.nucleoid.plasmid.api.game.GameCloseReason;
-import xyz.nucleoid.plasmid.api.game.GameSpace;
+import xyz.nucleoid.plasmid.api.game.*;
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeam;
+import xyz.nucleoid.plasmid.api.game.config.GameConfig;
 import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
 import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
-import xyz.nucleoid.plasmid.api.game.player.JoinAcceptor;
-import xyz.nucleoid.plasmid.api.game.player.JoinAcceptorResult;
-import xyz.nucleoid.plasmid.api.game.player.JoinOffer;
+import xyz.nucleoid.plasmid.api.game.player.*;
 import xyz.nucleoid.plasmid.api.game.rule.GameRuleType;
 import xyz.nucleoid.plasmid.api.util.PlayerRef;
+import xyz.nucleoid.plasmid.impl.game.manager.GameSpaceManagerImpl;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.item.ItemUseEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerAttackEntityEvent;
@@ -51,21 +56,31 @@ public class DuelsGameActive {
 
     public static final ArrayList<DuelsGameActive> runningGames = new ArrayList<>();
     private GamePhase gamePhase;
-    private long finishTime;
+    private long finishTime = -1;
+    private long votingTime = -1;
+    private long rematchTime = -1;
+    private ArrayList<ServerPlayer> playersVoted = new ArrayList<>();
+    private int votesYes = 0;
+    private int votesNo = 0;
+    private boolean voteFinished = false;
+    private boolean creatingGameSpace = false;
 
-    public DuelsGameActive(DuelsConfig config, GameSpace gameSpace, ServerLevel level, DuelsMap gameMap, Multimap<GameTeam, PlayerRef> teamPlayers, Object2ObjectMap<PlayerRef, DuelsPlayer> participants) {
+    private GameOpenContext<DuelsConfig> context;
+
+    public DuelsGameActive(DuelsConfig config, GameSpace gameSpace, ServerLevel level, DuelsMap gameMap, Multimap<GameTeam, PlayerRef> teamPlayers, Object2ObjectMap<PlayerRef, DuelsPlayer> participants, GameOpenContext<DuelsConfig> context) {
         this.config = config;
         this.gameSpace = gameSpace;
         this.level = level;
         this.gameMap = gameMap;
         this.teamPlayers = teamPlayers;
         this.participants = participants;
+        this.context = context;
         gamePhase = GamePhase.GAME_CONTINUE;
     }
 
-    public static void open(DuelsConfig config, GameSpace gameSpace, ServerLevel level, DuelsMap duelsMap, Multimap<GameTeam, PlayerRef> teamPlayers, Object2ObjectMap<PlayerRef, DuelsPlayer> participants){
+    public static void open(DuelsConfig config, GameSpace gameSpace, ServerLevel level, DuelsMap duelsMap, Multimap<GameTeam, PlayerRef> teamPlayers, Object2ObjectMap<PlayerRef, DuelsPlayer> participants, GameOpenContext<DuelsConfig> context){
         gameSpace.setActivity(game -> {
-            DuelsGameActive active = new DuelsGameActive(config, gameSpace, level, duelsMap, teamPlayers, participants);
+            DuelsGameActive active = new DuelsGameActive(config, gameSpace, level, duelsMap, teamPlayers, participants, context);
             runningGames.add(active);
 
             game.allow(GameRuleType.PVP);
@@ -120,6 +135,46 @@ public class DuelsGameActive {
                 break;
             }
             case GAME_ENDING -> {
+                if (rematchTime != -1 && level.getGameTime() >= rematchTime) {
+                    if (creatingGameSpace) break;
+                    creatingGameSpace = true;
+                    MutablePlayerSet players = this.gameSpace.getPlayers().copy(gameSpace.getServer());
+                    GameSpaceManager.get().open(gameSpace.getMetadata().sourceConfig()).handleAsync((newGameSpace, throwable) -> {
+                        for (ServerPlayer player : players) {
+                            JoinIntent intent;
+                            GameSpacePlayers oldPlayers = this.gameSpace.getPlayers();
+                            intent = oldPlayers.participants().contains(player) ? JoinIntent.PLAY : JoinIntent.SPECTATE;
+                            oldPlayers.kick(player);
+                            GamePlayerJoiner.tryJoin(player, newGameSpace, intent);
+                        }
+                        return null;
+                    });
+                    break;
+                }
+                if (level.getGameTime() >= votingTime && !voteFinished) {
+                    PlayerSet players = gameSpace.getPlayers().participants();
+                    players.forEach((player) -> {
+                        player.sendSystemMessage(Component.translatable("duels.vote.waiting"), true);
+                        if (!player.hasContainerOpen() && !playersVoted.contains(player)) {
+                            openVotingGui(player);
+                        }
+                    });
+                    if ((votesNo + votesYes) >= players.size()) {
+                        if (votesYes == votesNo) {
+                            gameSpace.getPlayers().sendMessage(Component.translatable("duels.vote.tie"));
+                            finishTime = level.getGameTime() + SharedConstants.TICKS_PER_SECOND * 5;
+                        } else if (votesYes >= votesNo) {
+                            gameSpace.getPlayers().sendMessage(Component.translatable("duels.vote.rematch"));
+                            rematchTime = level.getGameTime() + SharedConstants.TICKS_PER_SECOND * 5;
+                            finishTime = level.getGameTime() + SharedConstants.TICKS_PER_SECOND * 30;
+                        } else {
+                            gameSpace.getPlayers().sendMessage(Component.translatable("duels.vote.end"));
+                            finishTime = level.getGameTime() + SharedConstants.TICKS_PER_SECOND * 5;
+                        }
+                        voteFinished = true;
+                        gameSpace.getPlayers().playSound(SoundEvents.NOTE_BLOCK_PLING.value());
+                    }
+                }
                 if(level.getGameTime() >= finishTime){
                     gamePhase = GamePhase.GAME_FINISHED;
                 }
@@ -147,6 +202,10 @@ public class DuelsGameActive {
 
 
     public void equipPlayer(ServerPlayer player) {
+        player.setHealth(20);
+        player.getInventory().clearContent();
+        player.getFoodData().setFoodLevel(20);
+        player.getFoodData().setSaturation(5);
         for (ItemStackTemplate itemStackTemplate : this.config.items()) {
             player.getInventory().add(itemStackTemplate.create());
         }
@@ -178,6 +237,25 @@ public class DuelsGameActive {
         return EventResult.DENY;
     }
 
+    private void openVotingGui(ServerPlayer player) {
+        SimpleGui gui = new SimpleGui(MenuType.GENERIC_3x3, player, false);
+        gui.setTitle(Component.translatable("duels.vote.title"));
+        gui.setSlot(3, GuiElementBuilder.from(Items.WOOL.green().getDefaultInstance()).setName(Component.translatable("duels.vote.yes")).setCallback(() -> {
+            votesYes++;
+            playersVoted.add(player);
+            player.closeContainer();
+            gameSpace.getPlayers().playSound(SoundEvents.NOTE_BLOCK_PLING.value());
+        }));
+
+        gui.setSlot(5, GuiElementBuilder.from(Items.WOOL.red().getDefaultInstance()).setName(Component.translatable("duels.vote.no")).setCallback(() -> {
+            votesNo++;
+            playersVoted.add(player);
+            player.closeContainer();
+            gameSpace.getPlayers().playSound(SoundEvents.NOTE_BLOCK_PLING.value());
+        }));
+        gui.open();
+    }
+
     public void tryEndDuel(){
         if(this.teamPlayers.keySet().size() == 1) {
             DuelsPlayer duelsPlayer = participants.values().iterator().next();
@@ -193,7 +271,8 @@ public class DuelsGameActive {
             this.gameSpace.getPlayers().playSound(SoundEvents.PLAYER_LEVELUP, SoundSource.MASTER, 1, 1);
 
             gamePhase = GamePhase.GAME_ENDING;
-            this.finishTime = level.getGameTime() + 20*10;
+            this.votingTime = level.getGameTime() + SharedConstants.TICKS_PER_SECOND * 5;
+            this.finishTime = level.getGameTime() + SharedConstants.TICKS_PER_SECOND * 30;
         }
     }
 }

@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.hyper_pigeon.duels.game.map.DuelsMap;
 import net.hyper_pigeon.duels.game.map.DuelsMapGenerator;
+import net.minecraft.core.Holder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.scores.Team;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,6 +26,7 @@ import xyz.nucleoid.plasmid.api.game.common.team.GameTeam;
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeamConfig;
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeamKey;
 import xyz.nucleoid.plasmid.api.game.common.team.TeamAllocator;
+import xyz.nucleoid.plasmid.api.game.config.GameConfig;
 import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
 import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
 import xyz.nucleoid.plasmid.api.game.player.*;
@@ -45,7 +47,6 @@ public class DuelsGameWaiting {
     private final GameOpenContext<DuelsConfig> context;
     public final Object2ObjectMap<PlayerRef, DuelsPlayer> participants;
     private DuelsMap duelsMap;
-
     public DuelsGameWaiting(DuelsConfig config, GameSpace gameSpace, ServerLevel level, DuelsMap duelsMap, GameOpenContext<DuelsConfig> context) {
         this.config = config;
         this.gameSpace = gameSpace;
@@ -64,7 +65,6 @@ public class DuelsGameWaiting {
                 //.setTimeOfDay(6000)
                 .setGameRule(GameRules.IMMEDIATE_RESPAWN, true)
                 .setGameRule(GameRules.KEEP_INVENTORY, true);
-
 
         return context.openWithLevel(levelConfig, (activity, level) -> {
             DuelsGameWaiting waiting = new DuelsGameWaiting(duelsConfig, activity.getGameSpace(), level, duelsMap, context);
@@ -137,7 +137,7 @@ public class DuelsGameWaiting {
             participants.get(PlayerRef.of(player)).team = team;
         });
 
-        DuelsGameActive.open(config, gameSpace, level, duelsMap,teamPlayers,participants);
+        DuelsGameActive.open(config, gameSpace, level, duelsMap,teamPlayers,participants, context);
         return GameResult.ok();
     }
 
