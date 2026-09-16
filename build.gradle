@@ -40,6 +40,12 @@ processResources {
     }
 }
 
+fabricApi {
+    configureDataGeneration() {
+        client = true
+    }
+}
+
 def targetJavaVersion = 25
 tasks.withType(JavaCompile).configureEach {
     // ensure that the encoding is set to UTF-8, no matter what the system default is

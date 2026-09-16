@@ -1,0 +1,60 @@
+{
+  "icon": "iron_sword",
+  "name": "classic",
+  "armor": [
+    {
+      "id": "iron_helmet",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 1
+        }
+      }
+    },
+    {
+      "id": "iron_chestplate",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 1
+        }
+      }
+    },
+    {
+      "id": "iron_leggings",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 1
+        }
+      }
+    },
+    {
+      "id": "iron_boots",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 1
+        }
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "iron_sword",
+      "count": 1
+    },
+    {
+      "id": "bow",
+      "count": 1
+    },
+    {
+      "id": "golden_carrot",
+      "count": 4
+    },
+    {
+      "id": "arrow",
+      "count": 8
+    }
+  ]
+}

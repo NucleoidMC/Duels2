@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.hyper_pigeon.duels.game.map.DuelsMapConfig;
+import net.hyper_pigeon.duels.kits.Kit;
 import net.minecraft.world.item.ItemStackTemplate;
 import xyz.nucleoid.plasmid.api.game.common.config.WaitingLobbyConfig;
 
@@ -22,4 +23,8 @@ public record DuelsConfig(String mode, WaitingLobbyConfig playerConfig, int team
                 DuelsMapConfig.CODEC.fieldOf("map").forGetter(DuelsConfig::mapConfig)
         ).apply(instance, DuelsConfig::new);
     });
+
+    public DuelsConfig(String mode, WaitingLobbyConfig playerConfig, int teamSize, Kit kit, DuelsMapConfig mapConfig) {
+        this(mode, playerConfig, teamSize, kit.armor(), kit.items(), kit.offhand(), mapConfig);
+    }
 }

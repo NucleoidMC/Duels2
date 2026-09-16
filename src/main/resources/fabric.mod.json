@@ -14,6 +14,9 @@
   "entrypoints": {
     "main": [
       "net.hyper_pigeon.duels.Duels"
+    ],
+    "fabric-datagen": [
+      "net.hyper_pigeon.duels.Datagen"
     ]
   },
   "depends": {
