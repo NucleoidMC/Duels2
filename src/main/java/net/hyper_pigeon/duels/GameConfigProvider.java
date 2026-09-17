@@ -12,6 +12,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.util.StrictJsonParser;
@@ -25,8 +26,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiConsumer;
@@ -34,7 +34,58 @@ import java.util.function.BiConsumer;
 public class GameConfigProvider implements DataProvider {
     private final PackOutput output;
     private final CompletableFuture<HolderLookup.Provider> providerFuture;
+    String[] modes = {"single", "duos"};
+    Map<String, String> modeToIcon = Map.of("single", "iron_sword", "duos", "shield");
+    Map<String, Integer> modeSize = Map.of("single", 1, "duos", 2);
+    Map<String, String> mapToIcon = Map.of("mountains", "grass_block", "urban", "wind_charge");
+    String randomGameString = """
+    {
+      "type": "plasmid:random",
+      "games": |GAMES|,
+      "name": {
+        "translate": "game.nucleoid.random"
+      },
+      "icon": "emerald"
+    }
+    """;
 
+    String portalString = """
+        {
+            "type": "nucleoid_extras:styled/simple_menu",
+            "icon": "|ICON|",
+            "games": |GAMES|,
+            "name": {
+                "translate": "game.nucleoid.|MODE|"
+            }
+        }
+        """;
+    String rootPortal = """
+            {
+              "type": "nucleoid_extras:styled/advanced_menu",
+              "name": {
+                "translate": "|NAME|"
+              },
+              "icon": "|ICON|",
+              "entries": |ENTRIES|
+            }
+            """;
+    String portalEntry = """
+            {
+                "type": "nucleoid_extras:quick_portal",
+                "portal": "duels:duels/|MAP|/root",
+                "quick_portal": "duels:duels/|MAP|/root"
+            }
+            """;
+    String portalEntryWithQuickAction = """
+            {
+                "type": "nucleoid_extras:quick_portal",
+                "portal": "duels:duels/|MAP|/|MODE|/root",
+                "quick_portal": "duels:duels/|MAP|/|MODE|/random",
+                "message": {
+                  "translate": "text.duels.ui.action.modes"
+                }
+            }
+            """;
     public GameConfigProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         this.output = output;
         this.providerFuture = registriesFuture;
@@ -72,17 +123,43 @@ public class GameConfigProvider implements DataProvider {
                 Duels.LOGGER.error("Failed to open kit file {}: {}", file.getName(), e.getMessage());
             }
         }
-
-        generateConfigsForMode("single", maps, kits, ops, assetWriter);
-        generateConfigsForMode("duos", maps, kits, ops, assetWriter);
+        // i hate all of this code
+        // why must i be born to be a mediocre programmer
+        ArrayList<String> portals = new ArrayList<>();
+        for (String mode : modes) {
+            generateConfigsForMode(mode, maps, kits, ops, assetWriter);
+        }
+        for (Identifier map : maps) {
+            portals.add(
+                    portalEntry.replace("|MAP|", map.getPath())
+            );
+            //mapToIcon.get(map.getPath())
+            ArrayList<String> entries = new ArrayList<>();
+            for (String mode : modes) {
+                entries.add(
+                        portalEntryWithQuickAction.replace("|MAP|", map.getPath())
+                                .replace("|MODE|", mode)
+                );
+            }
+            assetWriter.accept("data/duels/game_portals/duels/"+map.getPath()+"/root.json",
+                    rootPortal.replace("|NAME|", "duels.map."+map.getPath())
+                            .replace("|ENTRIES|", entries.toString())
+                            .replace("|ICON|", mapToIcon.get(map.getPath())).getBytes(StandardCharsets.UTF_8));
+        }
+        assetWriter.accept("data/duels/game_portals/duels/root.json",
+                rootPortal.replace("|NAME|", "gameType.duels.duels")
+                        .replace("|ENTRIES|", portals.toString())
+                        .replace("|ICON|", "iron_sword").getBytes(StandardCharsets.UTF_8));
     }
 
     private void generateConfigsForMode(String mode, ArrayList<Identifier> maps, ArrayList<Kit> kits, RegistryOps<JsonElement> ops, BiConsumer<String, byte[]> assetWriter) {
-        int teamSize = mode.equals("single") ? 1 : 2;
+        int teamSize = modeSize.get(mode);
+        HashMap<Identifier, ArrayList<String>> gameNames = new HashMap<>();
         for (Identifier map : maps) {
+            ArrayList<String> names = new ArrayList<>();
             for (Kit kit : kits) {
                 GameConfig<?> config = new GameConfig<>(
-                        Duels.TYPE, null, null, null, kit.icon(), CustomValuesConfig.empty(),
+                        Duels.TYPE, null, null, List.of(Component.translatable("gameType.duels.duels.desc", teamSize+"v"+teamSize, kit.name().replace("_", " ")), Component.empty()), kit.icon(), CustomValuesConfig.empty(),
                         new DuelsConfig(mode,
                                 new WaitingLobbyConfig(teamSize * 2, teamSize * 2),
                                 teamSize,
@@ -92,11 +169,27 @@ public class GameConfigProvider implements DataProvider {
                 DataResult<JsonElement> result = GameConfig.ENTRY_CODEC.encodeStart(ops, Holder.direct(config));
                 result.ifSuccess(json -> {
                     assetWriter.accept("data/duels/plasmid/game/"+mode+"/"+configName+".json", result.getOrThrow().toString().getBytes(StandardCharsets.UTF_8));
+                    names.add("\"duels:"+mode+"/"+configName+"\"");
                 });
                 result.ifError(error -> {
                     Duels.LOGGER.error("Failed to generate game config for {} in {} mode because {}", map.toString(), mode, error.message());
                 });
             }
+            gameNames.put(map, names);
+            assetWriter.accept("data/duels/plasmid/game/"+mode+"/random_"+map.getPath()+".json", randomGameString.replace("|GAMES|", names.toString()).getBytes(StandardCharsets.UTF_8));
+            assetWriter.accept("data/duels/game_portals/duels/"+map.getPath()+"/"+mode+"/root.json",
+                    portalString.replace("|ICON|", modeToIcon.get(mode))
+                            .replace("|GAMES|", names.toString())
+                            .replace("|MODE|", mode).getBytes(StandardCharsets.UTF_8)
+            );
+            assetWriter.accept("data/duels/game_portals/duels/"+map.getPath()+"/"+mode+"/random.json",
+                    """
+                    {
+                      "type": "plasmid:concurrent_game",
+                      "game": "duels:|MODE|/random_|MAP|"
+                    }
+                    """.replace("|MAP|", map.getPath()).replace("|MODE|", mode).getBytes(StandardCharsets.UTF_8)
+            );
         }
     }
 

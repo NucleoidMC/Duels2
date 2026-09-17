@@ -1,0 +1,18 @@
+{
+  "type": "nucleoid_extras:styled/advanced_menu",
+  "name": {
+    "translate": "gameType.duels.duels"
+  },
+  "icon": "iron_sword",
+  "entries": [{
+    "type": "nucleoid_extras:quick_portal",
+    "portal": "duels:duels/mountains/root",
+    "quick_portal": "duels:duels/mountains/root"
+}
+, {
+    "type": "nucleoid_extras:quick_portal",
+    "portal": "duels:duels/urban/root",
+    "quick_portal": "duels:duels/urban/root"
+}
+]
+}

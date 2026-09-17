@@ -259,7 +259,7 @@ public class DuelsGameActive {
     public void tryEndDuel(){
         if(this.teamPlayers.keySet().size() == 1) {
             DuelsPlayer duelsPlayer = participants.values().iterator().next();
-            if(this.config.mode().equals("solo")) {
+            if(this.config.mode().equals("single")) {
                 this.gameSpace.getPlayers().sendMessage(Component.translatable("duels.win_text", duelsPlayer.getServerPlayer().getName()));
             }
             else {

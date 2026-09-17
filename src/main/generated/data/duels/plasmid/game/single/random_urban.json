@@ -1,0 +1,8 @@
+{
+  "type": "plasmid:random",
+  "games": ["duels:single/potion_diamond_urban", "duels:single/standard_diamond_urban", "duels:single/mace_urban", "duels:single/classic_urban", "duels:single/op_diamond_urban"],
+  "name": {
+    "translate": "game.nucleoid.random"
+  },
+  "icon": "emerald"
+}

@@ -1,0 +1,8 @@
+{
+    "type": "nucleoid_extras:styled/simple_menu",
+    "icon": "shield",
+    "games": ["duels:duos/potion_diamond_urban", "duels:duos/standard_diamond_urban", "duels:duos/mace_urban", "duels:duos/classic_urban", "duels:duos/op_diamond_urban"],
+    "name": {
+        "translate": "game.nucleoid.duos"
+    }
+}

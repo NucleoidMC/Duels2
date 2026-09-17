@@ -1,0 +1,52 @@
+{
+  "icon": "diamond_sword",
+  "name": "standard_diamond",
+  "armor": [
+    {
+      "id": "diamond_helmet",
+      "count": 1
+    },
+    {
+      "id": "diamond_chestplate",
+      "count": 1
+    },
+    {
+      "id": "diamond_leggings",
+      "count": 1
+    },
+    {
+      "id": "diamond_boots",
+      "count": 1
+    }
+  ],
+  "items": [
+    {
+      "id": "diamond_axe",
+      "count": 1
+    },
+    {
+      "id": "diamond_sword",
+      "count": 1
+    },
+    {
+      "id": "crossbow",
+      "count": 1
+    },
+    {
+      "id": "bow",
+      "count": 1
+    },
+    {
+      "id": "golden_carrot",
+      "count": 8
+    },
+    {
+      "id": "arrow",
+      "count": 6
+    }
+  ],
+  "offhand": {
+    "id": "shield",
+    "count": 1
+  }
+}

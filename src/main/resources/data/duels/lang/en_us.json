@@ -1,7 +1,10 @@
 {
   "gameType.duels.duels": "Duels",
+  "duels.map.urban": "Urban",
+  "duels.map.mountains": "Mountains",
   "game.duels.single.classic_mountains": "Classic Mountains",
   "game.duels.duos.classic_urban": "Classic Duos Urban",
+  "gameType.duels.duels.desc": "Fight in a %s battle with %s kits!",
   "gameType.duels.duels.desc.1": "Fight in a 2v2 battle with classic kits!",
   "gameType.duels.duels.desc.2": "Fight in a 1v1 battle with classic kits!",
   "gameType.duels.duels.desc.3": "Fight in a 2v2 battle with standard diamond kits!",
@@ -24,5 +27,5 @@
   "text.duels.ui.action.maps": "Right-click to view maps",
   "text.duels.ui.action.modes": "Right-click to view modes",
   "game.nucleoid.duos": "Duos",
-  "game.nucleoid.singles": "Singles"
+  "game.nucleoid.single": "Singles"
 }

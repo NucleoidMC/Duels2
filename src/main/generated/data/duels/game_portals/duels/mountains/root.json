@@ -1,0 +1,24 @@
+{
+  "type": "nucleoid_extras:styled/advanced_menu",
+  "name": {
+    "translate": "duels.map.mountains"
+  },
+  "icon": "grass_block",
+  "entries": [{
+    "type": "nucleoid_extras:quick_portal",
+    "portal": "duels:duels/mountains/single/root",
+    "quick_portal": "duels:duels/mountains/single/random",
+    "message": {
+      "translate": "text.duels.ui.action.modes"
+    }
+}
+, {
+    "type": "nucleoid_extras:quick_portal",
+    "portal": "duels:duels/mountains/duos/root",
+    "quick_portal": "duels:duels/mountains/duos/random",
+    "message": {
+      "translate": "text.duels.ui.action.modes"
+    }
+}
+]
+}

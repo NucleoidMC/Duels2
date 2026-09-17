@@ -1,0 +1,67 @@
+{
+  "name": "op_diamond",
+  "icon": "golden_apple",
+  "armor": [
+    {
+      "id": "diamond_helmet",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4
+        }
+      }
+    },
+    {
+      "id": "diamond_chestplate",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4
+        }
+      }
+    },
+    {
+      "id": "diamond_leggings",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4
+        }
+      }
+    },
+    {
+      "id": "diamond_boots",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4
+        }
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "diamond_axe",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "sharpness": 3
+        }
+      }
+    },
+    {
+      "id": "diamond_sword",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "sharpness": 5,
+          "sweeping_edge": 3
+        }
+      }
+    },
+    {
+      "id": "golden_apple",
+      "count": 6
+    }
+  ]
+}

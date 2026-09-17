@@ -1,0 +1,62 @@
+{
+  "name": "mace",
+  "icon": "mace",
+  "armor": [
+    {
+      "id": "diamond_helmet",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4
+        }
+      }
+    },
+    {
+      "id": "diamond_chestplate",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4
+        }
+      }
+    },
+    {
+      "id": "diamond_leggings",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4
+        }
+      }
+    },
+    {
+      "id": "diamond_boots",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "protection": 4
+        }
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "mace",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "wind_burst": 3,
+          "density": 5
+        }
+      }
+    },
+    {
+      "id": "wind_charge",
+      "count": 64
+    },
+    {
+      "id": "golden_apple",
+      "count": 4
+    }
+  ]
+}
