@@ -14,5 +14,10 @@
     "portal": "duels:duels/urban/root",
     "quick_portal": "duels:duels/urban/root"
 }
+, {
+    "type": "nucleoid_extras:quick_portal",
+    "portal": "duels:duels/revolution/root",
+    "quick_portal": "duels:duels/revolution/root"
+}
 ]
 }

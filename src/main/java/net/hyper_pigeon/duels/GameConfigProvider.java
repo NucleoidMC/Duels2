@@ -17,6 +17,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.util.StrictJsonParser;
 import net.minecraft.util.Util;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import xyz.nucleoid.plasmid.api.game.common.config.WaitingLobbyConfig;
 import xyz.nucleoid.plasmid.api.game.config.CustomValuesConfig;
@@ -37,7 +38,7 @@ public class GameConfigProvider implements DataProvider {
     String[] modes = {"single", "duos"};
     Map<String, String> modeToIcon = Map.of("single", "iron_sword", "duos", "shield");
     Map<String, Integer> modeSize = Map.of("single", 1, "duos", 2);
-    Map<String, String> mapToIcon = Map.of("mountains", "grass_block", "urban", "wind_charge");
+    Map<String, String> mapToIcon = Map.of("mountains", "grass_block", "urban", "wind_charge", "revolution", "stone_bricks");
     String randomGameString = """
     {
       "type": "plasmid:random",
@@ -158,8 +159,9 @@ public class GameConfigProvider implements DataProvider {
         for (Identifier map : maps) {
             ArrayList<String> names = new ArrayList<>();
             for (Kit kit : kits) {
+
                 GameConfig<?> config = new GameConfig<>(
-                        Duels.TYPE, null, null, List.of(Component.translatable("gameType.duels.duels.desc", teamSize+"v"+teamSize, kit.name().replace("_", " ")), Component.empty()), kit.icon(), CustomValuesConfig.empty(),
+                        Duels.TYPE, Component.literal(StringUtils.capitalize(kit.name().replace("_", " ").concat(" Duel"))), null, List.of(Component.translatable("gameType.duels.duels.desc", teamSize+"v"+teamSize, kit.name().replace("_", " ")), Component.empty()), kit.icon(), CustomValuesConfig.empty(),
                         new DuelsConfig(mode,
                                 new WaitingLobbyConfig(teamSize * 2, teamSize * 2),
                                 teamSize,

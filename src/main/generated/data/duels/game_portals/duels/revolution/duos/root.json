@@ -1,0 +1,8 @@
+{
+    "type": "nucleoid_extras:styled/simple_menu",
+    "icon": "shield",
+    "games": ["duels:duos/potion_diamond_revolution", "duels:duos/standard_diamond_revolution", "duels:duos/mace_revolution", "duels:duos/classic_revolution", "duels:duos/op_diamond_revolution"],
+    "name": {
+        "translate": "game.nucleoid.duos"
+    }
+}

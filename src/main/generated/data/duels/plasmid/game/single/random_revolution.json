@@ -1,0 +1,8 @@
+{
+  "type": "plasmid:random",
+  "games": ["duels:single/potion_diamond_revolution", "duels:single/standard_diamond_revolution", "duels:single/mace_revolution", "duels:single/classic_revolution", "duels:single/op_diamond_revolution"],
+  "name": {
+    "translate": "game.nucleoid.random"
+  },
+  "icon": "emerald"
+}
