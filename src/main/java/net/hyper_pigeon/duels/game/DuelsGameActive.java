@@ -12,6 +12,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,6 +40,7 @@ import xyz.nucleoid.stimuli.event.item.ItemUseEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerAttackEntityEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerConsumeHungerEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
+import xyz.nucleoid.stimuli.event.projectile.ProjectileHitEvent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -95,6 +97,7 @@ public class DuelsGameActive {
             game.listen(GameActivityEvents.ENABLE, active::onEnable);
             game.listen(GamePlayerEvents.REMOVE, active::removePlayer);
             game.listen(PlayerAttackEntityEvent.EVENT, active::attackEntity);
+            game.listen(ProjectileHitEvent.ENTITY, active::projectileHit);
             game.listen(PlayerConsumeHungerEvent.EVENT, active::consumeHunger);
             game.listen(ItemUseEvent.EVENT, active::onItemUse);
         });
@@ -115,10 +118,14 @@ public class DuelsGameActive {
     }
 
     private EventResult attackEntity(ServerPlayer serverPlayer, InteractionHand hand, Entity entity, EntityHitResult entityHitResult) {
-        if((this.config.mode().equals("duos") && entity instanceof ServerPlayer hitPlayer && getTeam(serverPlayer) != null && getTeam(hitPlayer) != null && Objects.equals(getTeam(serverPlayer), getTeam(hitPlayer)))) {
+        if((entity instanceof ServerPlayer hitPlayer && getTeam(serverPlayer) != null && getTeam(hitPlayer) != null && Objects.equals(getTeam(serverPlayer), getTeam(hitPlayer)))) {
             return EventResult.DENY;
         }
         return EventResult.PASS;
+    }
+
+    private EventResult projectileHit(Projectile projectile, EntityHitResult entityHitResult) {
+        return attackEntity((ServerPlayer) projectile.getOwner(), null, entityHitResult.getEntity(), entityHitResult);
     }
 
     // regen wind charges on use
@@ -233,6 +240,7 @@ public class DuelsGameActive {
 
     private EventResult onPlayerDeath(ServerPlayer serverPlayer, DamageSource source) {
         serverPlayer.setGameMode(GameType.SPECTATOR);
+        gameSpace.getPlayers().playSound(SoundEvents.CONDUIT_DEACTIVATE);
         removePlayer(serverPlayer);
         return EventResult.DENY;
     }
