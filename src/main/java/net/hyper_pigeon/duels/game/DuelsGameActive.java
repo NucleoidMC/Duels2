@@ -180,6 +180,19 @@ public class DuelsGameActive {
                         }
                         voteFinished = true;
                         gameSpace.getPlayers().playSound(SoundEvents.NOTE_BLOCK_PLING.value());
+                    } else {
+                        if (votesYes > players.size() / 2) {
+                            gameSpace.getPlayers().sendMessage(Component.translatable("duels.vote.rematch"));
+                            rematchTime = level.getGameTime() + SharedConstants.TICKS_PER_SECOND * 5;
+                            finishTime = level.getGameTime() + SharedConstants.TICKS_PER_SECOND * 30;
+                            voteFinished = true;
+                            gameSpace.getPlayers().playSound(SoundEvents.NOTE_BLOCK_PLING.value());
+                        } else if (votesNo >= players.size() / 2) {
+                            gameSpace.getPlayers().sendMessage(Component.translatable("duels.vote.end"));
+                            finishTime = level.getGameTime() + SharedConstants.TICKS_PER_SECOND * 5;
+                            voteFinished = true;
+                            gameSpace.getPlayers().playSound(SoundEvents.NOTE_BLOCK_PLING.value());
+                        }
                     }
                 }
                 if(level.getGameTime() >= finishTime){
